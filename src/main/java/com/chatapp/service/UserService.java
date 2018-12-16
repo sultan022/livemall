@@ -23,6 +23,8 @@ public class UserService {
 
 	public void signup(@Valid UserData userData, CustomResponse customResponse) throws CustomException {
 		try {
+			UtilBase64Image.createDirectory(userData.getEmail());
+			userData.setProfilePic(" ");
 			userRepository.save(userData);
 			customResponse.setCustomMessage("user created");
 

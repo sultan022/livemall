@@ -38,7 +38,6 @@ public class UserController {
 			userService.signup(userData, customResponse);
 		}
 			
-
 		return customResponse;
 
 	}
@@ -62,14 +61,7 @@ public class UserController {
 
 	}
 	
-	@GetMapping("/accountinfo/{email}")
-	@ResponseStatus(HttpStatus.CREATED)
-	public UserData getAccountInfo(@PathVariable String email) throws CustomException {
-
-		return userService.getAccountInfo(email);
-		
-
-	}
+	
 	
 	
 

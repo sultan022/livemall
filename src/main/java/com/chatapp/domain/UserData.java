@@ -6,13 +6,16 @@
 package com.chatapp.domain;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -100,6 +103,11 @@ public class UserData implements Serializable {
 	
 	@Column(name = "profile_pic_path")
 	private String profilePic;
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "userId")
+	private Collection<Product> productCollection;
+	
 
 	public UserData() {
 	}
@@ -238,6 +246,14 @@ public class UserData implements Serializable {
 
 	public void setCountry(String country) {
 		this.country = country;
+	}
+
+	public Collection<Product> getProductCollection() {
+		return productCollection;
+	}
+
+	public void setProductCollection(Collection<Product> productCollection) {
+		this.productCollection = productCollection;
 	}
 
 }

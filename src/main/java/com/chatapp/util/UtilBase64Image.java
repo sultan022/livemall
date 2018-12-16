@@ -43,8 +43,28 @@ public class UtilBase64Image {
 		
 		return path+"/"+path+"profilepic.png";
 	}
+	
+	public static String saveBase64StringAsImageForProduct(String base64Image, String path, int picNo, String userEmail) {
+		   
+		createDirectory(userEmail+"/"+path);
+		
+		try (FileOutputStream imageOutFile = new FileOutputStream(userEmail+"/"+path+"/"+path+picNo+".png")) {
+	        // Converting a Base64 String into Image byte array
+	        byte[] imageByteArray = Base64.getDecoder().decode(base64Image);
+	        imageOutFile.write(imageByteArray);
+	    } catch (FileNotFoundException e) {
+	        System.out.println("Image not found" + e);
+	    } catch (IOException ioe) {
+	        System.out.println("Exception while reading the Image " + ioe);
+	    }
+		
+		return userEmail+"/"+path+"/"+path+picNo+".png";
+	}
 
-	private static void createDirectory(String path) {
+	
+	
+
+	public static void createDirectory(String path) {
 
 		File theDir = new File(path);
 
@@ -65,7 +85,23 @@ public class UtilBase64Image {
 		    }
 		}
 		
+	}
+
+	public static void removeFile(String path) {
+
+		File file = new File(path);
 		
+		if(file.exists()){
+			if(file.delete())
+			{
+				System.out.println("File deleted successfully"); 
+			} else
+	        { 
+	            System.out.println("Failed to delete the file"); 
+	        } 
+			
+			
+		}
 		
 	}
 	
