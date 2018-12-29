@@ -2,13 +2,18 @@ package com.chatapp.dto;
 
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 public class ProductDTO {
 
-	
+	@NotNull
 	private String name;
 	private String description;
+	@NotNull
 	private String price;
+	@NotNull
 	private String quantity;
+	
 	private List<ImageDTO> imageDTOList;
 	public String getName() {
 		return name;

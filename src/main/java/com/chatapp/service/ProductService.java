@@ -33,7 +33,7 @@ public class ProductService {
 	@Autowired
 	ImageRepository imageRepository;
 
-	public Product saveProduct(@Valid Product product, String userEmail, CustomResponse customResponse)
+	public Product saveProduct(@Valid Product product, String userEmail)
 			throws CustomException {
 
 		try {
@@ -64,7 +64,6 @@ public class ProductService {
 
 			imageRepository.saveAll(product.getImageCollection());
 
-			customResponse.setCustomMessage("Product Added Successfully");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -160,7 +159,7 @@ public class ProductService {
 		return product;
 	}
 
-	public void delProduct(String productName, CustomResponse customResponse, String userEmail) throws CustomException {
+	public void delProduct(String productName, String userEmail) throws CustomException {
 
 		try {
 
@@ -175,7 +174,6 @@ public class ProductService {
 
 			productRepository.delete(product);
 
-			customResponse.setCustomMessage("deleted");
 
 		} catch (Exception e) {
 			e.printStackTrace();
