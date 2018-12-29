@@ -74,6 +74,7 @@ public class UserData implements Serializable {
 	@Size(min = 1, max = 200)
 	@Column(name = "password")
 	@NotNull(message = "password required!")
+	@JsonIgnore
 	private String password;
 	@Basic(optional = false)
 	@Size(min = 1, max = 200)
@@ -208,6 +209,7 @@ public class UserData implements Serializable {
 		this.category = category;
 	}
 
+	@NotNull
 	public String getUserType() {
 		return userType;
 	}

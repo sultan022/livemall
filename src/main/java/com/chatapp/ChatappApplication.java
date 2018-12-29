@@ -19,6 +19,7 @@ public class ChatappApplication  extends WebMvcConfigurerAdapter {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ChatappApplication.class, args);
+		
 	}
 	
 	
@@ -35,8 +36,8 @@ public class ChatappApplication  extends WebMvcConfigurerAdapter {
 	}
 
 	private ApiInfo generateApiInfo() {
-		return new ApiInfo("Chat App",
-				"chat service",
+		return new ApiInfo("Live Mall",
+				"live mall",
 				"Version 1.0 - mw", "urn:tos", "chat", "Apache 2.0",
 				"http://www.apache.org/licenses/LICENSE-2.0");
 	}

@@ -4,7 +4,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,36 +26,74 @@ public class UserController {
 	UserService userService;
 
 	@PostMapping("/signup")
-	@ResponseStatus(HttpStatus.CREATED)
-	public CustomResponse signup(@Valid @RequestBody UserData userData) throws CustomException {
+	@ResponseStatus(HttpStatus.OK)
+	public CustomResponse<UserData> signup(@Valid @RequestBody UserData userData)  {
 
-		CustomResponse customResponse = new CustomResponse();
+		CustomResponse<UserData> customResponse = new CustomResponse<>();
 
-		if (userData.getUserType() != null){
-			
 			userData.setName(userData.getFirstName()+" "+userData.getLastName());
-			userService.signup(userData, customResponse);
-		}
+			try {
+				userService.signup(userData);
+				customResponse.setData(userData);
+				customResponse.setMessage("User Created");
+				customResponse.setResponseCode(HttpStatus.OK);
+			} catch (CustomException e) {
+				e.printStackTrace();
+				customResponse.setMessage(e.getMessage());
+				customResponse.setResponseCode(HttpStatus.BAD_REQUEST);
+				
+			}
 			
 		return customResponse;
 
 	}
 	
 	@PostMapping("/login")
-	@ResponseStatus(HttpStatus.CREATED)
-	public UserData login(@Valid @RequestBody UserLogin userLogin) throws CustomException {
+	@ResponseStatus(HttpStatus.OK)
+	public CustomResponse<UserData> login(@Valid @RequestBody UserLogin userLogin) {
 
-			return userService.login(userLogin);
+		CustomResponse<UserData> customResponse = new CustomResponse<>();
+		
+		try {
+			
+			customResponse.setData(userService.login(userLogin));
+			customResponse.setMessage("User Found");
+			customResponse.setResponseCode(HttpStatus.OK);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			customResponse.setMessage(e.getMessage());
+			customResponse.setResponseCode(HttpStatus.BAD_REQUEST);
+			
+		}
+		
+		return customResponse;
+		
+		
 
 	}
 	
 
 	@PutMapping("/accountinfo/{email}")
-	@ResponseStatus(HttpStatus.CREATED)
-	public CustomResponse editAccountInfo(@Valid @RequestBody UserData userLogin, @PathVariable String email ) throws CustomException {
+	@ResponseStatus(HttpStatus.OK)
+	public CustomResponse<UserData> editAccountInfo(@Valid @RequestBody UserData userData, @PathVariable String email ) {
 
-		CustomResponse customResponse = new CustomResponse();
-		 userService.editAccountInfo(userLogin, customResponse, email);
+		CustomResponse<UserData> customResponse = new CustomResponse<>();
+		
+		 try {
+			userService.editAccountInfo(userData,email);
+			
+			customResponse.setData(userData);
+			customResponse.setMessage("User Updated");
+			customResponse.setResponseCode(HttpStatus.OK);
+		} catch (CustomException e) {
+			e.printStackTrace();
+			
+			customResponse.setMessage(e.getMessage());
+			customResponse.setResponseCode(HttpStatus.BAD_REQUEST);
+			
+			
+		}
 		 return customResponse;
 
 	}
