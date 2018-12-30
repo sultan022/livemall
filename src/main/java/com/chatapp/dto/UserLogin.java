@@ -1,13 +1,15 @@
 package com.chatapp.dto;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 public class UserLogin {
 
-	@NotNull
+	@Email
+	@NotNull(message="username required")
 	private String username;
 	
-	@NotNull
+	@NotNull(message="password required")
 	private String password;
 	
 	public String getUsername() {

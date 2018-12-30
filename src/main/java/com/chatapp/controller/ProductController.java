@@ -91,7 +91,7 @@ public class ProductController {
 	@DeleteMapping("/")
 	@ResponseStatus(HttpStatus.OK)
 	public <T> CustomResponse<T> deleteProduct(@RequestHeader(value = "userEmail") String userEmail,
-			@RequestHeader(value = "product_name") String name) {
+			@RequestHeader(value = "producName") String name) {
 
 		CustomResponse<T> customResponse = new CustomResponse();
 
@@ -118,7 +118,7 @@ public class ProductController {
 	@PutMapping("/")
 	@ResponseStatus(HttpStatus.OK)
 	public CustomResponse<ProductDTO> updateProduct(@RequestHeader(value = "userEmail") String userEmail,
-			@RequestHeader(value = "product_name") String productName, @Valid @RequestBody ProductDTO productDTO) {
+			@RequestHeader(value = "productName") String productName, @Valid @RequestBody ProductDTO productDTO) {
 
 		CustomResponse<ProductDTO> customResponse = new CustomResponse();
 

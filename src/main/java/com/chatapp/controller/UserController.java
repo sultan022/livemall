@@ -1,9 +1,11 @@
 package com.chatapp.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -22,6 +24,20 @@ import com.chatapp.util.CustomException;
 @RequestMapping("/rest/user")
 public class UserController {
 
+	
+	
+	@ExceptionHandler(Exception.class)
+	 public <T> CustomResponse<T> handleError(HttpServletRequest req, org.springframework.web.bind.MethodArgumentNotValidException ex) {
+	    ex.printStackTrace();
+	    CustomResponse<T> customResponse = new CustomResponse<>();
+	    customResponse.setMessage("Validation Failed for One or more Parameters");
+	    customResponse.setResponseCode(HttpStatus.BAD_REQUEST);
+	    return customResponse;
+	  }
+	
+	
+	
+	
 	@Autowired
 	UserService userService;
 
