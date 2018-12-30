@@ -1,7 +1,6 @@
 package com.chatapp.service;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -17,7 +16,6 @@ import com.chatapp.dto.ProductDTO;
 import com.chatapp.repository.ImageRepository;
 import com.chatapp.repository.ProductRepository;
 import com.chatapp.repository.UserRepository;
-import com.chatapp.response.CustomResponse;
 import com.chatapp.util.CustomException;
 import com.chatapp.util.UtilBase64Image;
 
@@ -33,42 +31,34 @@ public class ProductService {
 	@Autowired
 	ImageRepository imageRepository;
 
-	public Product saveProduct(@Valid Product product, String userEmail)
-			throws CustomException {
+	public Product saveProduct(@Valid Product product, String userEmail) throws CustomException {
 
-		try {
+		UserData userData = userRepository.findUserbyEmail(userEmail);
+		if (userData == null)
+			throw new CustomException("User does not Exists");
 
-			UserData userData = userRepository.findUserbyEmail(userEmail);
-			if (userData == null)
-				throw new CustomException("User does not Exists");
+		product.setUserId(userData);
+		product = productRepository.save(product);
 
-			product.setUserId(userData);
-			product = productRepository.save(product);
+		if (product.getImageCollection() != null) {
+			UtilBase64Image.createDirectory(userEmail);
 
-			if (product.getImageCollection() != null) {
+			List<Image> tempList = (List<Image>) product.getImageCollection();
 
-				List<Image> tempList = (List<Image>) product.getImageCollection();
+			for (int i = 0; i < tempList.size(); i++) {
 
-				for (int i = 0; i < tempList.size(); i++) {
-
-					String picPath = UtilBase64Image.saveBase64StringAsImageForProduct(tempList.get(i).getImageString(),
-							product.getName(), i, userEmail);
-					tempList.get(i).setImagePath(picPath);
-					// tempList.get(i).setProductId(productId);
-					tempList.get(i).setImageString(" ");
-					tempList.get(i).setProductId(product);
-				}
-
-				product.setImageCollection(tempList);
+				String picPath = UtilBase64Image.saveBase64StringAsImageForProduct(tempList.get(i).getImageString(),
+						product.getName(), i, userEmail);
+				tempList.get(i).setImagePath(picPath);
+				// tempList.get(i).setProductId(productId);
+				tempList.get(i).setImageString(" ");
+				tempList.get(i).setProductId(product);
 			}
 
-			imageRepository.saveAll(product.getImageCollection());
-
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new CustomException(e.getMessage());
+			product.setImageCollection(tempList);
 		}
+
+		imageRepository.saveAll(product.getImageCollection());
 
 		return product;
 
@@ -79,57 +69,55 @@ public class ProductService {
 		List<Product> productsFromDB = new ArrayList<>();
 		List<ProductDTO> productDTOs = new ArrayList<>();
 		ProductDTO productDTO = new ProductDTO();
-		List<ImageDTO> imageDTOs = new ArrayList<>();
+		
 		ImageDTO imageDTO = new ImageDTO();
 
-		try {
+		Integer userId = userRepository.findUserIdbyEmail(userEmail);
 
-			Integer userId = userRepository.findUserIdbyEmail(userEmail);
+		if (userId != null) {
 
-			if (userId != null) {
+			productsFromDB = productRepository.findProductByUserId(userId);
 
-				productsFromDB = productRepository.findProductByUserId(userId);
+			for (int i = 0; i < productsFromDB.size(); i++) {
 
-				for (int i = 0; i < productsFromDB.size(); i++) {
+				if (productsFromDB.get(i).getImageCollection() != null) {
 
-					if (productsFromDB.get(i).getImageCollection() != null) {
+					List<Image> currentImageList = (List<Image>) productsFromDB.get(i).getImageCollection();
+					List<ImageDTO> imageDTOs = new ArrayList<>();
+					
+					for (int j = 0; j < currentImageList.size(); j++) {
+						// currentImageList.get(j).setImageString(
+						// UtilBase64Image.getImageFromDirectory(currentImageList.get(j).getImagePath()));
 
-						List<Image> currentImageList = (List<Image>) productsFromDB.get(i).getImageCollection();
+						// image dto
 
-						for (int j = 0; j < currentImageList.size(); j++) {
-							// currentImageList.get(j).setImageString(
-							// UtilBase64Image.getImageFromDirectory(currentImageList.get(j).getImagePath()));
-
-							// image dto
-
-							imageDTO.setImageString(
-									UtilBase64Image.getImageFromDirectory(currentImageList.get(j).getImagePath()));
+						imageDTO.setImageString(
+								UtilBase64Image.getImageFromDirectory(currentImageList.get(j).getImagePath()));
+						if (imageDTO.getImageString() != null)
 							imageDTOs.add(imageDTO);
-							imageDTO = new ImageDTO();
 
-						}
-						productDTO.setDescription(productsFromDB.get(i).getDescription());
-						productDTO.setName(productsFromDB.get(i).getName());
-						productDTO.setPrice(productsFromDB.get(i).getPrice());
-						productDTO.setQuantity(productsFromDB.get(i).getQuantity());
-						productDTO.setImageDTOList(imageDTOs);
-
-						productDTOs.add(productDTO);
-						productDTO = new ProductDTO();
-						// productsFromDB.get(i).setImageCollection(currentImageList);
+						imageDTO = new ImageDTO();
 
 					}
+					productDTO.setDescription(productsFromDB.get(i).getDescription());
+					productDTO.setName(productsFromDB.get(i).getName());
+					productDTO.setPrice(productsFromDB.get(i).getPrice());
+					productDTO.setQuantity(productsFromDB.get(i).getQuantity());
+					productDTO.setImageDTOList(imageDTOs);
+					
+					
+
+					productDTOs.add(productDTO);
+					productDTO = new ProductDTO();
+					// productsFromDB.get(i).setImageCollection(currentImageList);
 
 				}
+
 			}
-
-			else
-				throw new CustomException("User Does not Exist");
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new CustomException(e.getMessage());
 		}
+
+		else
+			throw new CustomException("User Does not Exist");
 
 		return productDTOs;
 	}
@@ -161,42 +149,28 @@ public class ProductService {
 
 	public void delProduct(String productName, String userEmail) throws CustomException {
 
-		try {
+		Product product = productRepository.findProductByName(productName);
+		Integer userID = userRepository.findUserIdbyEmail(userEmail);
+		if (product == null)
+			throw new CustomException("Product Does not Exists");
+		if (userID == null)
+			throw new CustomException("User Does not Exists");
 
-			Product product = productRepository.findProductByName(productName);
-			Integer userID = userRepository.findUserIdbyEmail(userEmail);
-			if (product == null)
-				throw new CustomException("Product Does not Exists");
-			if (userID == null)
-				throw new CustomException("User Does not Exists");
+		removeProductFromDir(productName, userEmail, product);
 
-			removeProductFromDir(productName, userEmail, product);
-
-			productRepository.delete(product);
-
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new CustomException(e.getMessage());
-		}
+		productRepository.delete(product);
 
 	}
 
 	private void removeProductFromDir(String name, String userEmail, Product product) throws CustomException {
-		try {
 
-			product.getImageCollection().forEach(image -> {
+		product.getImageCollection().forEach(image -> {
 
-				UtilBase64Image.removeFile(image.getImagePath());
+			UtilBase64Image.removeFile(image.getImagePath());
 
-			});
+		});
 
-			UtilBase64Image.removeFile(userEmail + "/" + product.getName());
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new CustomException(e.getMessage());
-		}
+		UtilBase64Image.removeFile(userEmail + "/" + product.getName());
 
 	}
 

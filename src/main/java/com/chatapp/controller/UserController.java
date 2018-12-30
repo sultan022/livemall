@@ -27,79 +27,88 @@ public class UserController {
 
 	@PostMapping("/signup")
 	@ResponseStatus(HttpStatus.OK)
-	public CustomResponse<UserData> signup(@Valid @RequestBody UserData userData)  {
+	public CustomResponse<UserData> signup(@Valid @RequestBody UserData userData) {
 
 		CustomResponse<UserData> customResponse = new CustomResponse<>();
 
-			userData.setName(userData.getFirstName()+" "+userData.getLastName());
-			try {
-				userService.signup(userData);
-				customResponse.setData(userData);
-				customResponse.setMessage("User Created");
-				customResponse.setResponseCode(HttpStatus.OK);
-			} catch (CustomException e) {
-				e.printStackTrace();
-				customResponse.setMessage(e.getMessage());
-				customResponse.setResponseCode(HttpStatus.BAD_REQUEST);
-				
-			}
-			
+		// userData.setName(userData.getFirstName()+" "+userData.getLastName());
+		try {
+			userService.signup(userData);
+			customResponse.setData(userData);
+			customResponse.setMessage("User Created");
+			customResponse.setResponseCode(HttpStatus.OK);
+		} catch (CustomException e) {
+			e.printStackTrace();
+
+			customResponse.setMessage(e.getMessage());
+			customResponse.setResponseCode(HttpStatus.BAD_REQUEST);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			customResponse.setMessage("Exception");
+			customResponse.setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		return customResponse;
 
 	}
-	
+
 	@PostMapping("/login")
 	@ResponseStatus(HttpStatus.OK)
 	public CustomResponse<UserData> login(@Valid @RequestBody UserLogin userLogin) {
 
 		CustomResponse<UserData> customResponse = new CustomResponse<>();
-		
+
 		try {
-			
+
 			customResponse.setData(userService.login(userLogin));
 			customResponse.setMessage("User Found");
 			customResponse.setResponseCode(HttpStatus.OK);
-			
-		} catch (Exception e) {
+
+		} catch (CustomException e) {
 			e.printStackTrace();
+
 			customResponse.setMessage(e.getMessage());
 			customResponse.setResponseCode(HttpStatus.BAD_REQUEST);
-			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			customResponse.setMessage("Exception");
+			customResponse.setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
+
 		return customResponse;
-		
-		
 
 	}
-	
 
 	@PutMapping("/accountinfo/{email}")
 	@ResponseStatus(HttpStatus.OK)
-	public CustomResponse<UserData> editAccountInfo(@Valid @RequestBody UserData userData, @PathVariable String email ) {
+	public CustomResponse<UserData> editAccountInfo(@Valid @RequestBody UserData userData, @PathVariable String email) {
 
 		CustomResponse<UserData> customResponse = new CustomResponse<>();
-		
-		 try {
-			userService.editAccountInfo(userData,email);
-			
+
+		try {
+			userService.editAccountInfo(userData, email);
+
 			customResponse.setData(userData);
 			customResponse.setMessage("User Updated");
 			customResponse.setResponseCode(HttpStatus.OK);
+		
 		} catch (CustomException e) {
 			e.printStackTrace();
-			
+
 			customResponse.setMessage(e.getMessage());
 			customResponse.setResponseCode(HttpStatus.BAD_REQUEST);
-			
-			
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			customResponse.setMessage("Exception");
+			customResponse.setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		 return customResponse;
+		return customResponse;
 
 	}
-	
-	
-	
-	
 
 }

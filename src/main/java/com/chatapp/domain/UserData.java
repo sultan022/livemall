@@ -38,27 +38,32 @@ public class UserData implements Serializable {
 	@Column(name = "id")
 	@JsonIgnore
 	private Integer id;
-	@Basic(optional = false)
-	@NotNull
-	@Size(min = 1, max = 200)
-	@Column(name = "first_name")
-	private String firstName;
-	@Basic(optional = false)
-	@NotNull
-	@Size(min = 1, max = 200)
-	@Column(name = "last_name")
-	private String lastName;
-	@Basic(optional = false)
-	@NotNull
+	/*
+	 * @Basic(optional = false)
+	 * 
+	 * @NotNull
+	 * 
+	 * @Size(min = 1, max = 200)
+	 * 
+	 * @Column(name = "first_name") private String firstName;
+	 * 
+	 * @Basic(optional = false)
+	 * 
+	 * @NotNull
+	 * 
+	 * @Size(min = 1, max = 200)
+	 * 
+	 * @Column(name = "last_name") private String lastName;
+	 */
 	@Size(min = 1, max = 200)
 	@Column(name = "nick_name")
-	private String nickName;
+	private String nickname;
 
 	@Basic(optional = false)
 	@NotNull
 	@Size(min = 1, max = 200)
 	@Column(name = "name")
-	private String name;
+	private String fullName;
 
 	@Basic(optional = false)
 	@NotNull
@@ -74,7 +79,6 @@ public class UserData implements Serializable {
 	@Size(min = 1, max = 200)
 	@Column(name = "password")
 	@NotNull(message = "password required!")
-	@JsonIgnore
 	private String password;
 	@Basic(optional = false)
 	@Size(min = 1, max = 200)
@@ -84,7 +88,6 @@ public class UserData implements Serializable {
 	@Size(min = 1, max = 200)
 	@Column(name = "country")
 	private String country;
-	
 	@Basic(optional = false)
 	@NotNull
 	@Size(min = 1, max = 200)
@@ -96,19 +99,17 @@ public class UserData implements Serializable {
 	@Column(name = "category")
 	private String category;
 	@Basic(optional = false)
-	@Size(min = 1, max = 200)
 	@Column(name = "user_type")
 	@NotNull(message = "user type required!")
-	private String userType;
-	
-	
+
+	private UserType userType;
+
 	@Column(name = "profile_pic_path")
 	private String profilePic;
-	
+
 	@JsonIgnore
 	@OneToMany(mappedBy = "userId")
 	private Collection<Product> productCollection;
-	
 
 	public UserData() {
 	}
@@ -117,23 +118,25 @@ public class UserData implements Serializable {
 		this.id = id;
 	}
 
-	public UserData(Integer id, String firstName, String lastName, String nickName, String phoneNumber, String email,
-			String password, String city,String country, String storeName, String category, String userType, String name, String profilePic) {
+	public UserData(Integer id, String firstName, String lastName, String nickname, String phoneNumber, String email,
+			String password, String city, String country, String storeName, String category, UserType userType,
+			String fullName, String profilePic) {
 		this.id = id;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.nickName = nickName;
+		/*
+		 * this.firstName = firstName; this.lastName = lastName;
+		 */
+		this.nickname = nickname;
 		this.phoneNumber = phoneNumber;
 		this.email = email;
 		this.password = password;
 		this.city = city;
-		this.country= country;
+		this.country = country;
 		this.storeName = storeName;
 		this.category = category;
 		this.userType = userType;
-		this.name= name;
-		this.profilePic= profilePic;
-		
+		this.fullName = fullName;
+		this.profilePic = profilePic;
+
 	}
 
 	public Integer getId() {
@@ -144,29 +147,16 @@ public class UserData implements Serializable {
 		this.id = id;
 	}
 
-	public String getFirstName() {
-		return firstName;
-	}
-
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-
-	public String getLastName() {
-		return lastName;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-
-	public String getNickName() {
-		return nickName;
-	}
-
-	public void setNickName(String nickName) {
-		this.nickName = nickName;
-	}
+	/*
+	 * public String getFirstName() { return firstName; }
+	 * 
+	 * public void setFirstName(String firstName) { this.firstName = firstName;
+	 * }
+	 * 
+	 * public String getLastName() { return lastName; }
+	 * 
+	 * public void setLastName(String lastName) { this.lastName = lastName; }
+	 */
 
 	public String getPhoneNumber() {
 		return phoneNumber;
@@ -192,7 +182,6 @@ public class UserData implements Serializable {
 		this.password = password;
 	}
 
-
 	public String getStoreName() {
 		return storeName;
 	}
@@ -210,20 +199,12 @@ public class UserData implements Serializable {
 	}
 
 	@NotNull
-	public String getUserType() {
+	public UserType getUserType() {
 		return userType;
 	}
 
-	public void setUserType(String userType) {
+	public void setUserType(UserType userType) {
 		this.userType = userType;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public String getProfilePic() {
@@ -256,6 +237,22 @@ public class UserData implements Serializable {
 
 	public void setProductCollection(Collection<Product> productCollection) {
 		this.productCollection = productCollection;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
 
 }

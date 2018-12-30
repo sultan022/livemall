@@ -22,65 +22,52 @@ public class UserService {
 	// CustomResponse customResponse;
 
 	public void signup(@Valid UserData userData) throws CustomException {
-		try {
-			UtilBase64Image.createDirectory(userData.getEmail());
-			userData.setProfilePic(" ");
-			userRepository.save(userData);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new CustomException(e.getMessage());
-		}
+		UtilBase64Image.createDirectory(userData.getEmail());
+		userData.setProfilePic(" ");
+		userRepository.save(userData);
 
 	}
 
 	public UserData login(@Valid UserLogin userLogin) throws CustomException {
-		try {
 
-			UserData userDataFromDB = userRepository.findUserByEmailAndPassword(userLogin.getUsername(), userLogin.getPassword());
-			if(userDataFromDB==null)
-				throw new CustomException("Email or Password Does Not Match");
-				
-			
-			return userDataFromDB;
-		} catch (Exception e) {
-			throw new CustomException(e.getMessage());
-		}
+		UserData userDataFromDB = userRepository.findUserByEmailAndPassword(userLogin.getUsername(),
+				userLogin.getPassword());
+		if (userDataFromDB != null)
+			userDataFromDB.setPassword("");
+		else
+			throw new CustomException("Email or Password Does Not Match");
+
+		return userDataFromDB;
 
 	}
 
 	public void editAccountInfo(@Valid UserData userData, String email) throws CustomException {
 
-		try {
-			Integer id = userRepository.findUserIdbyEmail(email);
-			if (id == null)
-				throw new CustomException("User Does Not Exists!");
-			
-			if(userData.getProfilePic()!=null && userData.getProfilePic().length()>1) {
-				String picPath = UtilBase64Image.saveBase64StringAsImage(userData.getProfilePic(), email);
-				userData.setProfilePic(picPath);
-			}
-			userData.setId(id);
-			userData.setEmail(email);
-			userRepository.save(userData);
+		Integer id = userRepository.findUserIdbyEmail(email);
+		if (id == null)
+			throw new CustomException("User Does Not Exists!");
 
-		} catch (Exception e) {
-			throw new CustomException(e.getMessage());
+		String userPictureOriginalString = "";
+		if (userData.getProfilePic() != null && userData.getProfilePic().length() > 1) {
+			userPictureOriginalString = userData.getProfilePic();
+			String picPath = UtilBase64Image.saveBase64StringAsImage(userData.getProfilePic(), email);
+			userData.setProfilePic(picPath);
 		}
+		userData.setId(id);
+		userData.setEmail(email);
+		userRepository.save(userData);
+
+		userData.setProfilePic(userPictureOriginalString);
 
 	}
 
 	public UserData getAccountInfo(String email) throws CustomException {
 
-		try {
+		UserData userDataFromDB = userRepository.findUserbyEmail(email);
+		userDataFromDB.setProfilePic(UtilBase64Image.getImageFromDirectory(userDataFromDB.getProfilePic()));
+		return userDataFromDB;
 
-			UserData userDataFromDB = userRepository.findUserbyEmail(email);
-			userDataFromDB.setProfilePic(UtilBase64Image.getImageFromDirectory(userDataFromDB.getProfilePic()));
-			return userDataFromDB;
-
-		} catch (Exception e) {
-			throw new CustomException(e.getMessage());
-		}
 	}
 
 }

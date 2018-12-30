@@ -34,22 +34,28 @@ public class ProductController {
 	@PostMapping("/")
 	@ResponseStatus(HttpStatus.CREATED)
 	public CustomResponse<ProductDTO> addProduct(@Valid @RequestBody ProductDTO productDTO,
-			@RequestHeader(value = "user_email") String userEmail)  {
+			@RequestHeader(value = "userEmail") String userEmail) {
 
 		CustomResponse<ProductDTO> customResponse = new CustomResponse();
 
 		Product product = productService.createProductFromProductDTO(productDTO);
 		try {
-			
+
 			productService.saveProduct(product, userEmail);
 			customResponse.setData(productDTO);
 			customResponse.setMessage("Product Added Successfully");
 			customResponse.setResponseCode(HttpStatus.OK);
 		} catch (CustomException e) {
 			e.printStackTrace();
-			
+
 			customResponse.setMessage(e.getMessage());
 			customResponse.setResponseCode(HttpStatus.BAD_REQUEST);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			customResponse.setMessage("Exception");
+			customResponse.setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return customResponse;
 
@@ -57,29 +63,35 @@ public class ProductController {
 
 	@GetMapping("/")
 	@ResponseStatus(HttpStatus.OK)
-	public CustomResponse<List<ProductDTO>> getProduct(@RequestHeader(value = "user_email") String userEmail) {
+	public CustomResponse<List<ProductDTO>> getProduct(@RequestHeader(value = "userEmail") String userEmail) {
 
 		CustomResponse<List<ProductDTO>> customResponse = new CustomResponse<>();
 		try {
 			customResponse.setData(productService.getProducts(userEmail));
 			customResponse.setMessage("");
 			customResponse.setResponseCode(HttpStatus.OK);
-			
+
 		} catch (CustomException e) {
 			e.printStackTrace();
+
 			customResponse.setMessage(e.getMessage());
 			customResponse.setResponseCode(HttpStatus.BAD_REQUEST);
-		
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			customResponse.setMessage("Exception");
+			customResponse.setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
+
 		return customResponse;
 
 	}
 
 	@DeleteMapping("/")
 	@ResponseStatus(HttpStatus.OK)
-	public <T> CustomResponse<T> deleteProduct(@RequestHeader(value = "user_email") String userEmail,
-			@RequestHeader(value = "product_name") String name)  {
+	public <T> CustomResponse<T> deleteProduct(@RequestHeader(value = "userEmail") String userEmail,
+			@RequestHeader(value = "product_name") String name) {
 
 		CustomResponse<T> customResponse = new CustomResponse();
 
@@ -89,8 +101,15 @@ public class ProductController {
 			customResponse.setResponseCode(HttpStatus.OK);
 		} catch (CustomException e) {
 			e.printStackTrace();
+
 			customResponse.setMessage(e.getMessage());
 			customResponse.setResponseCode(HttpStatus.BAD_REQUEST);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			customResponse.setMessage("Exception");
+			customResponse.setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 		return customResponse;
@@ -98,34 +117,35 @@ public class ProductController {
 
 	@PutMapping("/")
 	@ResponseStatus(HttpStatus.OK)
-	public CustomResponse<ProductDTO> updateProduct(@RequestHeader(value = "user_email") String userEmail,
-			@RequestHeader(value = "product_name") String productName, @Valid @RequestBody ProductDTO productDTO)
-			{
+	public CustomResponse<ProductDTO> updateProduct(@RequestHeader(value = "userEmail") String userEmail,
+			@RequestHeader(value = "product_name") String productName, @Valid @RequestBody ProductDTO productDTO) {
 
 		CustomResponse<ProductDTO> customResponse = new CustomResponse();
 
 		try {
-			
+
 			productService.delProduct(productName, userEmail);
 			Product product = productService.createProductFromProductDTO(productDTO);
 			productService.saveProduct(product, userEmail);
-			
+
 			customResponse.setData(productDTO);
 			customResponse.setMessage("Product Updated Succesfully");
-			customResponse.setResponseCode(HttpStatus.BAD_REQUEST);
-			
-			
-		} catch (Exception e) {
+			customResponse.setResponseCode(HttpStatus.OK);
+
+		} catch (CustomException e) {
 			e.printStackTrace();
+
 			customResponse.setMessage(e.getMessage());
 			customResponse.setResponseCode(HttpStatus.BAD_REQUEST);
-		
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+			customResponse.setMessage("Exception");
+			customResponse.setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
-		
+
 		return customResponse;
 	}
-
-	
 
 }
