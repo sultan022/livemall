@@ -37,8 +37,8 @@ public class ChatappApplication  extends WebMvcConfigurerAdapter {
 
 	private ApiInfo generateApiInfo() {
 		return new ApiInfo("Live Mall",
-				"live mall",
-				"Version 1.0 - mw", "urn:tos", "chat", "Apache 2.0",
+				"* PLease provide lang parameter with each request in the url for internationalization e.g. ?lang=en, ?lang=fr",
+				"Version 1.0", "urn:tos", "live mall", "Apache 2.0",
 				"http://www.apache.org/licenses/LICENSE-2.0");
 	}
 }

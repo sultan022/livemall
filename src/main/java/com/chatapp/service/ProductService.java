@@ -2,6 +2,7 @@ package com.chatapp.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -37,11 +38,14 @@ public class ProductService {
 		if (userData == null)
 			throw new CustomException("User does not Exists");
 
+		UtilBase64Image.createDirectory(userEmail);
+		
 		product.setUserId(userData);
+		product.setProductMainImage(UtilBase64Image.saveBase64StringAsMainImageForProduct(product.getProductMainImage(), product.getName(), "mainpic", userEmail));
 		product = productRepository.save(product);
 
 		if (product.getImageCollection() != null) {
-			UtilBase64Image.createDirectory(userEmail);
+			
 
 			List<Image> tempList = (List<Image>) product.getImageCollection();
 
@@ -64,7 +68,7 @@ public class ProductService {
 
 	}
 
-	public List<ProductDTO> getProducts(String userEmail) throws CustomException {
+	public List<ProductDTO> getProducts(String userEmail,  String productName) throws CustomException {
 
 		List<Product> productsFromDB = new ArrayList<>();
 		List<ProductDTO> productDTOs = new ArrayList<>();
@@ -76,8 +80,11 @@ public class ProductService {
 
 		if (userId != null) {
 
-			productsFromDB = productRepository.findProductByUserId(userId);
-
+			productsFromDB = productRepository.findProductListByName(productName);
+			
+			if(productsFromDB.size()<1)
+				throw new CustomException("Product Not Found");
+			
 			for (int i = 0; i < productsFromDB.size(); i++) {
 
 				if (productsFromDB.get(i).getImageCollection() != null) {
@@ -99,10 +106,12 @@ public class ProductService {
 						imageDTO = new ImageDTO();
 
 					}
+				//	productDTO.setId(productsFromDB.get(i).getId());
 					productDTO.setDescription(productsFromDB.get(i).getDescription());
 					productDTO.setName(productsFromDB.get(i).getName());
 					productDTO.setPrice(productsFromDB.get(i).getPrice());
 					productDTO.setQuantity(productsFromDB.get(i).getQuantity());
+					productDTO.setProductMainImage(UtilBase64Image.getImageFromDirectory(productsFromDB.get(i).getProductMainImage()));
 					productDTO.setImageDTOList(imageDTOs);
 					
 					
@@ -131,6 +140,36 @@ public class ProductService {
 		product.setName(productDTO.getName());
 		product.setPrice(productDTO.getPrice());
 		product.setQuantity(productDTO.getQuantity());
+		product.setProductMainImage(productDTO.getProductMainImage());
+		// product.setImageCollection((Collection)
+		// productDTO.getImageDTOList());
+
+		if (productDTO.getImageDTOList() != null)
+			for (int i = 0; i < productDTO.getImageDTOList().size(); i++) {
+
+				image.setImageString(productDTO.getImageDTOList().get(i).getImageString());
+				images.add(image);
+				image = new Image();
+			}
+
+		product.setImageCollection(images);
+
+		return product;
+	}
+	
+	
+	
+	
+	public Product createProductFromProductDTOForNewProduct(@Valid ProductDTO productDTO) {
+
+		Product product = new Product();
+		Image image = new Image();
+		List<Image> images = new ArrayList<>();
+		product.setDescription(productDTO.getDescription());
+		product.setName(productDTO.getName());
+		product.setPrice(productDTO.getPrice());
+		product.setQuantity(productDTO.getQuantity());
+		product.setProductMainImage(productDTO.getProductMainImage());
 		// product.setImageCollection((Collection)
 		// productDTO.getImageDTOList());
 
@@ -182,6 +221,7 @@ public class ProductService {
 		productDTO.setName(product.getName());
 		productDTO.setPrice(product.getPrice());
 		productDTO.setQuantity(product.getQuantity());
+		productDTO.setProductMainImage(product.getProductMainImage());
 
 		List<Image> images = (List<Image>) product.getImageCollection();
 
@@ -195,6 +235,15 @@ public class ProductService {
 
 		productDTO.setImageDTOList(imageDTOs);
 
+	}
+
+	public String testMethod(String string) {
+		
+		System.out.println("in test method "+Thread.currentThread().getName());
+		
+		
+		//return Optional.empty();/
+		return "";
 	}
 
 }

@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -24,10 +23,13 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.Data;
+
 /**
  *
  * @author faheem.sultan
  */
+@Data
 @Entity
 @Table(name = "user_data", uniqueConstraints = @UniqueConstraint(columnNames = { "email", "phone_number" }))
 public class UserData implements Serializable {
@@ -102,12 +104,17 @@ public class UserData implements Serializable {
 	@Basic(optional = false)
 	@Column(name = "user_type")
 	@NotNull(message = "user type required!")
-
 	private UserType userType;
 
 	@Column(name = "profile_pic_path")
 	private String profilePic;
 
+	@Column(name = "follower_count")
+	private Integer followerCount;
+	
+	@Column(name = "following_count")
+	private Integer followingCount;
+	
 	@JsonIgnore
 	@OneToMany(mappedBy = "userId")
 	private Collection<Product> productCollection;
@@ -148,16 +155,21 @@ public class UserData implements Serializable {
 		this.id = id;
 	}
 
-	/*
-	 * public String getFirstName() { return firstName; }
-	 * 
-	 * public void setFirstName(String firstName) { this.firstName = firstName;
-	 * }
-	 * 
-	 * public String getLastName() { return lastName; }
-	 * 
-	 * public void setLastName(String lastName) { this.lastName = lastName; }
-	 */
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
 
 	public String getPhoneNumber() {
 		return phoneNumber;
@@ -183,39 +195,6 @@ public class UserData implements Serializable {
 		this.password = password;
 	}
 
-	public String getStoreName() {
-		return storeName;
-	}
-
-	public void setStoreName(String storeName) {
-		this.storeName = storeName;
-	}
-
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
-	}
-
-	@NotNull
-	public UserType getUserType() {
-		return userType;
-	}
-
-	public void setUserType(UserType userType) {
-		this.userType = userType;
-	}
-
-	public String getProfilePic() {
-		return profilePic;
-	}
-
-	public void setProfilePic(String profilePic) {
-		this.profilePic = profilePic;
-	}
-
 	public String getCity() {
 		return city;
 	}
@@ -232,6 +211,54 @@ public class UserData implements Serializable {
 		this.country = country;
 	}
 
+	public String getStoreName() {
+		return storeName;
+	}
+
+	public void setStoreName(String storeName) {
+		this.storeName = storeName;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public UserType getUserType() {
+		return userType;
+	}
+
+	public void setUserType(UserType userType) {
+		this.userType = userType;
+	}
+
+	public String getProfilePic() {
+		return profilePic;
+	}
+
+	public void setProfilePic(String profilePic) {
+		this.profilePic = profilePic;
+	}
+
+	public Integer getFollowerCount() {
+		return followerCount;
+	}
+
+	public void setFollowerCount(Integer followerCount) {
+		this.followerCount = followerCount;
+	}
+
+	public Integer getFollowingCount() {
+		return followingCount;
+	}
+
+	public void setFollowingCount(Integer followingCount) {
+		this.followingCount = followingCount;
+	}
+
 	public Collection<Product> getProductCollection() {
 		return productCollection;
 	}
@@ -240,20 +267,8 @@ public class UserData implements Serializable {
 		this.productCollection = productCollection;
 	}
 
-	public String getNickname() {
-		return nickname;
-	}
 
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
-	}
-
-	public String getFullName() {
-		return fullName;
-	}
-
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-	}
 
 }
+
+	

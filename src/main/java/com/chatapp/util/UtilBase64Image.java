@@ -61,6 +61,22 @@ public class UtilBase64Image {
 		return userEmail+"/"+path+"/"+path+picNo+".png";
 	}
 
+	public static String saveBase64StringAsMainImageForProduct(String base64Image, String path, String picName, String userEmail) {
+		   
+		createDirectory(userEmail+"/"+path);
+		
+		try (FileOutputStream imageOutFile = new FileOutputStream(userEmail+"/"+path+"/"+path+picName+".png")) {
+	        // Converting a Base64 String into Image byte array
+	        byte[] imageByteArray = Base64.getDecoder().decode(base64Image);
+	        imageOutFile.write(imageByteArray);
+	    } catch (FileNotFoundException e) {
+	        System.out.println("Image not found" + e);
+	    } catch (IOException ioe) {
+	        System.out.println("Exception while reading the Image " + ioe);
+	    }
+		
+		return userEmail+"/"+path+"/"+path+picName+".png";
+	}
 	
 	
 

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class CustomResponse<T> {
 
 	private String message;
+	private String messageForUser;
 	private HttpStatus responseCode;
 	private T data;
 
@@ -34,6 +35,12 @@ public class CustomResponse<T> {
 
 	public void setData(T data) {
 		this.data = data;
+	}
+	public String getMessageForUser() {
+		return messageForUser;
+	}
+	public void setMessageForUser(String messageForUser) {
+		this.messageForUser = messageForUser;
 	}
 
 }
