@@ -27,18 +27,23 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/rest/product")
+
 public class ProductController {
 
 	@Autowired
 	ProductService productService;
 
+//	@Autowired
+//	private ServletContext servletContext;
+
 	@ApiOperation(value = "Add a new product against a user")
 	@PostMapping("/")
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> addProduct(@Valid @RequestBody ProductDTO productDTO,
-			@RequestHeader(value = "userEmail") String userEmail,
-			@Valid @RequestHeader(value = "lang") String lang) throws CustomException {
+			@RequestHeader(value = "userEmail") String userEmail, @Valid @RequestHeader(value = "lang") String lang)
+			throws CustomException {
 
+		
 		CustomResponse<ProductDTO> customResponse = new CustomResponse();
 
 		Product product = productService.createProductFromProductDTOForNewProduct(productDTO);
@@ -72,8 +77,8 @@ public class ProductController {
 	@DeleteMapping("/")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<?> deleteProduct(@RequestHeader(value = "userEmail") String userEmail,
-			@RequestHeader(value = "productName") String productName,
-			@Valid @RequestHeader(value = "lang") String lang) throws CustomException {
+			@RequestHeader(value = "productName") String productName, @Valid @RequestHeader(value = "lang") String lang)
+			throws CustomException {
 
 		CustomResponse<?> customResponse = new CustomResponse();
 
@@ -88,10 +93,8 @@ public class ProductController {
 	@PutMapping("/")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<?> updateProduct(@RequestHeader(value = "userEmail") String userEmail,
-			@RequestHeader(value = "productName") String productName, 
-			@Valid @RequestBody ProductDTO productDTO,
-			@Valid @RequestHeader(value = "lang") String lang)
-			throws CustomException {
+			@RequestHeader(value = "productName") String productName, @Valid @RequestBody ProductDTO productDTO,
+			@Valid @RequestHeader(value = "lang") String lang) throws CustomException {
 
 		CustomResponse<ProductDTO> customResponse = new CustomResponse();
 

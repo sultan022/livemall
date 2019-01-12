@@ -29,7 +29,6 @@ import lombok.Data;
  *
  * @author faheem.sultan
  */
-@Data
 @Entity
 @Table(name = "user_data", uniqueConstraints = @UniqueConstraint(columnNames = { "email", "phone_number" }))
 public class UserData implements Serializable {

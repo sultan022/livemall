@@ -15,10 +15,12 @@ import com.chatapp.util.Utilities;
 
 @ControllerAdvice
 @RestController
+@SuppressWarnings("rawtypes")
 public class GlobalExceptionController {
 
 	@Autowired
 	Utilities utilities;
+	
 	
 	@ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
 	 public <T> ResponseEntity<?> handleError(HttpServletRequest req, org.springframework.web.bind.MethodArgumentNotValidException ex) {
