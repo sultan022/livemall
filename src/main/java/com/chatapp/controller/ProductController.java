@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,7 +41,7 @@ public class ProductController {
 	@PostMapping("/")
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> addProduct(@Valid @RequestBody ProductDTO productDTO,
-			@RequestHeader(value = "userEmail") String userEmail, @Valid @RequestHeader(value = "lang") String lang)
+			@RequestHeader(value = "userEmail") String userEmail, @Valid @RequestParam("lang") String lang)
 			throws CustomException {
 
 		
@@ -50,7 +51,7 @@ public class ProductController {
 
 		productService.saveProduct(product, userEmail);
 		customResponse.setData(productDTO);
-		customResponse.setMessage("Product Added Successfully");
+		customResponse.setMessage("Success");
 		customResponse.setResponseCode(HttpStatus.OK);
 
 		return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
@@ -61,12 +62,12 @@ public class ProductController {
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<?> getProduct(@Valid @RequestHeader(value = "userEmail") String userEmail,
 			@Valid @RequestHeader(value = "productName") String productName,
-			@Valid @RequestHeader(value = "lang") String lang) throws CustomException {
+			@Valid @RequestParam("lang") String lang) throws CustomException {
 
 		CustomResponse<List<ProductDTO>> customResponse = new CustomResponse<>();
 
 		customResponse.setData(productService.getProducts(userEmail, productName));
-		customResponse.setMessage("");
+		customResponse.setMessage("Success");
 		customResponse.setResponseCode(HttpStatus.OK);
 
 		return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
@@ -77,13 +78,14 @@ public class ProductController {
 	@DeleteMapping("/")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<?> deleteProduct(@RequestHeader(value = "userEmail") String userEmail,
-			@RequestHeader(value = "productName") String productName, @Valid @RequestHeader(value = "lang") String lang)
+			@RequestHeader(value = "productName") String productName, 
+			@Valid @RequestParam("lang") String lang)
 			throws CustomException {
 
 		CustomResponse<?> customResponse = new CustomResponse();
 
 		productService.delProduct(productName, userEmail);
-		customResponse.setMessage("product deleted");
+		customResponse.setMessage("Success");
 		customResponse.setResponseCode(HttpStatus.OK);
 
 		return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
@@ -94,7 +96,7 @@ public class ProductController {
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<?> updateProduct(@RequestHeader(value = "userEmail") String userEmail,
 			@RequestHeader(value = "productName") String productName, @Valid @RequestBody ProductDTO productDTO,
-			@Valid @RequestHeader(value = "lang") String lang) throws CustomException {
+			@Valid @RequestParam("lang") String lang) throws CustomException {
 
 		CustomResponse<ProductDTO> customResponse = new CustomResponse();
 
@@ -103,7 +105,7 @@ public class ProductController {
 		productService.saveProduct(product, userEmail);
 
 		customResponse.setData(productDTO);
-		customResponse.setMessage("Product Updated Succesfully");
+		customResponse.setMessage("Success");
 		customResponse.setResponseCode(HttpStatus.OK);
 
 		return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);

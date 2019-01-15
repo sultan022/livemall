@@ -44,6 +44,24 @@ public class UtilBase64Image {
 		return path+"/"+path+"profilepic.png";
 	}
 	
+	public static String saveCategoryIconInDirectory(String base64Image, String path) {
+		   
+		createDirectory(path);
+		
+		try (FileOutputStream imageOutFile = new FileOutputStream(path+"/"+path+"icon.png")) {
+	        // Converting a Base64 String into Image byte array
+	        byte[] imageByteArray = Base64.getDecoder().decode(base64Image);
+	        imageOutFile.write(imageByteArray);
+	    } catch (FileNotFoundException e) {
+	        System.out.println("Image not found" + e);
+	    } catch (IOException ioe) {
+	        System.out.println("Exception while reading the Image " + ioe);
+	    }
+		
+		return path+"/"+path+"icon.png";
+	}
+	
+	
 	public static String saveBase64StringAsImageForProduct(String base64Image, String path, int picNo, String userEmail) {
 		   
 		createDirectory(userEmail+"/"+path);

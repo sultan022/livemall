@@ -1,5 +1,6 @@
 package com.chatapp;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +34,12 @@ public class ChatappApplication  extends WebMvcConfigurerAdapter {
 		return new Docket(DocumentationType.SWAGGER_2).select()
 				.apis(RequestHandlerSelectors.basePackage(getClass().getPackage().getName())).paths(PathSelectors.any())
 				.build().apiInfo(generateApiInfo());
+	}
+	
+	
+	@Bean
+	public ModelMapper modelMapper(){
+		return new ModelMapper();
 	}
 
 	private ApiInfo generateApiInfo() {

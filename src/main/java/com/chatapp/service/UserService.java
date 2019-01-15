@@ -1,33 +1,29 @@
 package com.chatapp.service;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.validation.Valid;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.chatapp.domain.Image;
 import com.chatapp.domain.Product;
 import com.chatapp.domain.UserData;
+import com.chatapp.domain.UserFollower;
 import com.chatapp.dto.AddFollower;
 import com.chatapp.dto.ImageDTO;
 import com.chatapp.dto.ProductDTO;
+import com.chatapp.dto.RateUserDTO;
 import com.chatapp.dto.UserDtoWithProducts;
 import com.chatapp.dto.UserLogin;
+import com.chatapp.repository.UserFollowerRepository;
 import com.chatapp.repository.UserRepository;
-import com.chatapp.response.CustomResponse;
 import com.chatapp.util.CustomException;
 import com.chatapp.util.UtilBase64Image;
-import org.springframework.transaction.annotation.Transactional;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -35,10 +31,11 @@ public class UserService {
 	@Autowired
 	UserRepository userRepository;
 
+	@Autowired
 	ModelMapper modelMapper;
 
-	// @Autowired
-	// CustomResponse customResponse;
+	@Autowired
+	UserFollowerRepository userFollowerRepository;
 
 	public void signup(@Valid UserData userData) throws CustomException {
 
@@ -97,17 +94,21 @@ public class UserService {
 
 		UserData userData = userRepository.findByEmailOptional(userEmail)
 				.orElseThrow(() -> new CustomException("User Not Found"));
-
+		
 		userData.setProfilePic(UtilBase64Image.getImageFromDirectory(userData.getProfilePic()));
 		userData.getProductCollection().forEach(product -> {
 
 			product.setProductMainImage(UtilBase64Image.getImageFromDirectory(product.getProductMainImage()));
-			product.getImageCollection().forEach(image -> {
-
-				image.setImageString(UtilBase64Image.getImageFromDirectory(image.getImagePath()));
-			});
+//			product.getImageCollection().forEach(image -> {
+//
+//				image.setImageString(UtilBase64Image.getImageFromDirectory(image.getImagePath()));
+//			});
 		});
 
+		
+		
+		userData.setFollowerCount(userRepository.getFollowerCount(userData.getId()));
+		userData.setFollowingCount(userRepository.getFollowingCount(userData.getId()));
 		UserDtoWithProducts userDtoWithProducts = new UserDtoWithProducts();
 
 		mapUserEntityToUserDto(userDtoWithProducts, userData);
@@ -135,7 +136,8 @@ public class UserService {
 		userDtoWithProducts.setProfilePic(userData.getProfilePic());
 		userDtoWithProducts.setStoreName(userData.getStoreName());
 		userDtoWithProducts.setUserType(userData.getUserType());
-
+		userDtoWithProducts.setFollowerCount(userData.getFollowerCount());
+		userDtoWithProducts.setFollowingCount(userData.getFollowingCount());
 		// convert products
 
 		for (Product product : userData.getProductCollection()) {
@@ -145,18 +147,7 @@ public class UserService {
 			productDTO.setPrice(product.getPrice());
 			productDTO.setProductMainImage(product.getProductMainImage());
 			productDTO.setQuantity(product.getQuantity());
-			// imageDTOs.clear();
-			// imageDTOs = new ArrayList<>();
-			//
-			// for(Image image : product.getImageCollection()){
-			//
-			// imageDTO.setImagePath(image.getImagePath());
-			// imageDTO.setImageString(image.getImageString());
-			// imageDTOs.add(imageDTO.getImageString()!=null?imageDTO:null);
-			// imageDTO = new ImageDTO();
-			// }
-			//
-			// productDTO.setImageDTOList(imageDTOs!=null?imageDTOs:null);
+
 			productDTOs.add(productDTO);
 			productDTO = new ProductDTO();
 
@@ -168,32 +159,29 @@ public class UserService {
 
 	public void addFollower(AddFollower addFollower) throws CustomException {
 
-		List<String> userEmails = Arrays.asList(addFollower.getSourceUserEmail(), addFollower.getTargetUSerEmail());
+		Integer followerId, followingId;
 
-		List<String> usersFromDB = userRepository.checkExistsByEmailReturnIds(userEmails);
+		followerId = userRepository.findUserIdbyEmail(addFollower.getSourceUserEmail());
+		if (followerId == null)
+			throw new CustomException("user does not exist " + addFollower.getSourceUserEmail());
 
-		if (usersFromDB.size() == 0)
-			throw new CustomException("Users Do not exist");
+		followingId = userRepository.findUserIdbyEmail(addFollower.getTargetUSerEmail());
 
-		if (usersFromDB.size() == 2) {
+		if (followingId == null)
+			throw new CustomException("user does not exist " + addFollower.getTargetUSerEmail());
+		// update user1 following
 
-			// perform logic here
+		UserFollower userFollower = new UserFollower();
+		userFollower.setUserId(followingId);
+		userFollower.setFollowerId(followerId);
 
-		} else {
-
-			List<String> usersNotAvailable = userEmails.stream()
-					.filter(list1Obj -> !usersFromDB.stream()
-							.collect(Collectors.toSet())
-							.contains(list1Obj))
-					.collect(Collectors.toList());
-			
-			throw new CustomException(usersNotAvailable.toString()+" Not Available in System");
-
-		}
-
-		
+		userFollowerRepository.save(userFollower);
 
 	}
 
+	public void rateUser(RateUserDTO rateUserDto) {
+
+	
+	}
 
 }
