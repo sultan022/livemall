@@ -7,7 +7,9 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.chatapp.domain.UserData;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface UserRepository extends CrudRepository<UserData, Integer> {
 
 	@Query(value = "select* from user_data where email=:username and password=:password", nativeQuery = true)

@@ -60,7 +60,7 @@ public class UserController {
 	@PostMapping("/login")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<?> login(@Valid @RequestBody UserLogin userLogin,
-			@Valid @RequestParam("lang") String lang) throws CustomException {
+			@Valid @RequestParam("lang") String lang) throws CustomException, Exception {
 
 		CustomResponse<UserData> customResponse = new CustomResponse<>();
 
@@ -98,6 +98,8 @@ public class UserController {
 			@Valid @RequestParam("lang") String lang) throws CustomException, Exception {
 
 		CustomResponse<UserDtoWithProducts> customResponse = new CustomResponse<>();
+
+		userService.getUserAndProductDetilasWithPagination(userEmail,1,2);
 
 		return DeferredResults.from(CompletableFuture.supplyAsync(() -> {
 
@@ -137,7 +139,7 @@ public class UserController {
 	
 	
 	@ApiOperation(value = "provide rating for a user")
-	@PostMapping("/providerating")
+	@PostMapping("/providereviewandrating")
 	@ResponseStatus(HttpStatus.OK)
 	public <T> DeferredResult<ResponseEntity<?>> addRating(@Valid @RequestBody RateUserDTO rateUserDto,
 			@Valid @RequestParam("lang") String lang) throws CustomException, Exception {
@@ -148,8 +150,7 @@ public class UserController {
 
 			try {
 				userService.rateUser(rateUserDto);
-				customResponse.setMessage("Successfully");
-				customResponse.setMessage("Successfully Rated");
+				customResponse.setMessage("Success");
 				customResponse.setResponseCode(HttpStatus.OK);
 			} catch (CustomException e) {
 				e.printStackTrace();

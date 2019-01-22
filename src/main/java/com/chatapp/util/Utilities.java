@@ -5,19 +5,19 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.Locale;
+
 @Component
 public class Utilities {
 
-		@Autowired
-	  MessageSource messageSource;
-	
+    @Autowired
+    MessageSource messageSource;
 
-	public String readMultiValueMessage(String name, String lang) {
-		
-	//	Locale loc
-		
-		return messageSource.getMessage(name, null, LocaleContextHolder.getLocale());
-	}
-	
-	
+
+    public String readMultiValueMessage(String name, String lang) {
+
+
+        return messageSource.getMessage(name, null, LocaleContextHolder.getLocale());
+    }
+
 }

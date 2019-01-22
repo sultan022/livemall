@@ -70,7 +70,7 @@ public class GlobalExceptionController {
 	 public <T> ResponseEntity<?> handleError(HttpServletRequest req,RuntimeException ex) {
 		    ex.printStackTrace();
 		    CustomResponse<T> customResponse = new CustomResponse<>();
-		    customResponse.setMessage(ex.getMessage());
+		    customResponse.setMessage("Exception");
 		    customResponse.setMessageForUser(utilities.readMultiValueMessage("exception.user.message", req.getHeader("lang")));
 		    customResponse.setResponseCode(HttpStatus.BAD_REQUEST);
 		    return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.BAD_REQUEST);

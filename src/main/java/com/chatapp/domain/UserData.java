@@ -8,27 +8,22 @@ package com.chatapp.domain;
 import java.io.Serializable;
 import java.util.Collection;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  *
  * @author faheem.sultan
  */
+@Data @AllArgsConstructor @NoArgsConstructor
 @Entity
 @Table(name = "user_data", uniqueConstraints = @UniqueConstraint(columnNames = { "email", "phone_number" }))
 public class UserData implements Serializable {
@@ -40,23 +35,7 @@ public class UserData implements Serializable {
 	@Column(name = "id")
 	@JsonIgnore
 	private Integer id;
-	/*
-	 * @Basic(optional = false)
-	 * 
-	 * @NotNull
-	 * 
-	 * @Size(min = 1, max = 200)
-	 * 
-	 * @Column(name = "first_name") private String firstName;
-	 * 
-	 * @Basic(optional = false)
-	 * 
-	 * @NotNull
-	 * 
-	 * @Size(min = 1, max = 200)
-	 * 
-	 * @Column(name = "last_name") private String lastName;
-	 */
+
 	@Column(name = "nick_name")
 	private String nickname;
 
@@ -114,158 +93,9 @@ public class UserData implements Serializable {
 	@Column(name = "following_count")
 	private Integer followingCount;
 	
-	@JsonIgnore
-	@OneToMany(mappedBy = "userId")
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn (name = "id")
 	private Collection<Product> productCollection;
-
-	public UserData() {
-	}
-
-	public UserData(Integer id) {
-		this.id = id;
-	}
-
-	public UserData(Integer id, String firstName, String lastName, String nickname, String phoneNumber, String email,
-			String password, String city, String country, String storeName, String category, UserType userType,
-			String fullName, String profilePic) {
-		this.id = id;
-		/*
-		 * this.firstName = firstName; this.lastName = lastName;
-		 */
-		this.nickname = nickname;
-		this.phoneNumber = phoneNumber;
-		this.email = email;
-		this.password = password;
-		this.city = city;
-		this.country = country;
-		this.storeName = storeName;
-		this.category = category;
-		this.userType = userType;
-		this.fullName = fullName;
-		this.profilePic = profilePic;
-
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getNickname() {
-		return nickname;
-	}
-
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
-	}
-
-	public String getFullName() {
-		return fullName;
-	}
-
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-	}
-
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
-
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
-	public String getStoreName() {
-		return storeName;
-	}
-
-	public void setStoreName(String storeName) {
-		this.storeName = storeName;
-	}
-
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
-	}
-
-	public UserType getUserType() {
-		return userType;
-	}
-
-	public void setUserType(UserType userType) {
-		this.userType = userType;
-	}
-
-	public String getProfilePic() {
-		return profilePic;
-	}
-
-	public void setProfilePic(String profilePic) {
-		this.profilePic = profilePic;
-	}
-
-	public Integer getFollowerCount() {
-		return followerCount;
-	}
-
-	public void setFollowerCount(Integer followerCount) {
-		this.followerCount = followerCount;
-	}
-
-	public Integer getFollowingCount() {
-		return followingCount;
-	}
-
-	public void setFollowingCount(Integer followingCount) {
-		this.followingCount = followingCount;
-	}
-
-	public Collection<Product> getProductCollection() {
-		return productCollection;
-	}
-
-	public void setProductCollection(Collection<Product> productCollection) {
-		this.productCollection = productCollection;
-	}
-
 
 
 }

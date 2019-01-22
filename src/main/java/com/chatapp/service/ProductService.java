@@ -40,7 +40,7 @@ public class ProductService {
 
 		UtilBase64Image.createDirectory(userEmail);
 		
-		product.setUserId(userData);
+		product.setUserId(userData.getId());
 		product.setProductMainImage(UtilBase64Image.saveBase64StringAsMainImageForProduct(product.getProductMainImage(), product.getName(), "mainpic", userEmail));
 		product = productRepository.save(product);
 

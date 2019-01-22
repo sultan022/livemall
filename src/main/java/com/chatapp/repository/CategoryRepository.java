@@ -8,7 +8,9 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.chatapp.domain.Category;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface CategoryRepository extends CrudRepository<Category, Integer> {
 
 	@Query(value = "select * from category where lang=:lang", nativeQuery = true)

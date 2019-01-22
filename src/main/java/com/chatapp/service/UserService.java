@@ -6,8 +6,12 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import com.chatapp.repository.UserPaginationRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +41,9 @@ public class UserService {
 	@Autowired
 	UserFollowerRepository userFollowerRepository;
 
+	@Autowired
+	UserPaginationRepository userPaginationRepository;
+
 	public void signup(@Valid UserData userData) throws CustomException {
 
 		UtilBase64Image.createDirectory(userData.getEmail());
@@ -45,7 +52,7 @@ public class UserService {
 
 	}
 
-	public UserData login(@Valid UserLogin userLogin) throws CustomException {
+	public UserData login(@Valid UserLogin userLogin) throws CustomException, Exception {
 
 		UserData userDataFromDB = userRepository.findUserByEmailAndPassword(userLogin.getUsername(),
 				userLogin.getPassword());
@@ -117,6 +124,30 @@ public class UserService {
 
 	}
 
+	/*
+	 *
+	 * only for testing purpose
+	 * user and products with Pageble pagination
+	 *
+	 *
+	 * */
+	public UserDtoWithProducts getUserAndProductDetilasWithPagination(String userEmail, Integer pageNumber, Integer size){
+
+		//Page<UserData> userData = userPaginationRepository.findByEmailPagination(new PageRequest(pageNumber, size));
+
+		Pageable pageable = PageRequest.of(pageNumber, size);
+		Page<UserData> page = userPaginationRepository.findAll(pageable);
+		//userPaginationRepository.
+		page.getContent().forEach(page1->{
+			System.out.println(page1.toString());
+		});
+
+		return null;
+	}
+
+
+
+
 	private void mapUserEntityToUserDto(UserDtoWithProducts userDtoWithProducts, UserData userData) {
 
 		List<ProductDTO> productDTOs = new ArrayList<>();
@@ -183,5 +214,7 @@ public class UserService {
 
 	
 	}
+
+
 
 }
