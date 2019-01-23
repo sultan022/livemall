@@ -1,5 +1,6 @@
 package com.chatapp.repository;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
@@ -24,7 +25,8 @@ public interface ProductRepository extends CrudRepository<Product, Integer>{
 	@Query(value="select * from product where name=:name", nativeQuery=true)
 	List<Product> findProductListByName(@Param("name") String name);
 
-//	@Query(value="select id from product where name=:name", nativeQuery=true)
-//	Integer findProductIdByName(String productName);
+	@Query(value="select * from product where user_id=:userId limit :start,:end", nativeQuery=true)
+	Collection<Product> findProductByUserIdPagination(@Param("userId") Integer id, @Param("start") Integer start, @Param("end") Integer end);
+
 
 }

@@ -1,6 +1,5 @@
 package com.chatapp.controller;
 
-import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 
 import javax.validation.Valid;
@@ -95,16 +94,15 @@ public class UserController {
 	@ResponseStatus(HttpStatus.OK)
 	public <T> DeferredResult<ResponseEntity<?>> fetchUsertoView(
 			@Valid @RequestHeader(value = "userEmail") String userEmail,
-			@Valid @RequestParam("lang") String lang) throws CustomException, Exception {
+			@Valid @RequestParam("lang") String lang,
+			@Valid @RequestParam("page") Integer page) throws CustomException, Exception {
 
 		CustomResponse<UserDtoWithProducts> customResponse = new CustomResponse<>();
-
-		userService.getUserAndProductDetilasWithPagination(userEmail,1,2);
 
 		return DeferredResults.from(CompletableFuture.supplyAsync(() -> {
 
 			try {
-				customResponse.setData(userService.getUserAndProductsDetails(userEmail));
+				customResponse.setData(userService.getUserAndProductsDetails(userEmail,page));
 				customResponse.setMessage("Success");
 				customResponse.setResponseCode(HttpStatus.OK);
 			} catch (CustomException e) {
@@ -149,7 +147,7 @@ public class UserController {
 		return DeferredResults.from(CompletableFuture.supplyAsync(() -> {
 
 			try {
-				userService.rateUser(rateUserDto);
+				userService.addReviewRating(rateUserDto);
 				customResponse.setMessage("Success");
 				customResponse.setResponseCode(HttpStatus.OK);
 			} catch (CustomException e) {

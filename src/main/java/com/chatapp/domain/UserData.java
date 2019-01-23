@@ -92,6 +92,11 @@ public class UserData implements Serializable {
 	
 	@Column(name = "following_count")
 	private Integer followingCount;
+
+	@Column(name="avg_rating")
+	private Double avgRating;
+	@Column(name="rating_count")
+	private Integer ratingCount;
 	
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn (name = "id")

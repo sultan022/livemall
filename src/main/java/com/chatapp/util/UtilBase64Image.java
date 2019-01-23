@@ -1,15 +1,13 @@
 package com.chatapp.util;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
 
 public class UtilBase64Image {
 
 
-    //private static String mainPath ="D:/live-mall-data/";
-  private static String mainPath ="/live-mall-app/live-mall-data/";
+  private static String mainPath ="/live-mall-data/";
 
     public static String getImageFromDirectory(String imagePath) {
 
@@ -102,9 +100,38 @@ public class UtilBase64Image {
 
     public static void createDirectory(String path) {
 
+       if(UtilBase64Image.createMainDirectory()){
+
+           String filePath = Paths.get(mainPath+path).toString();
+
+
+           File theDir = new File(filePath);
+           boolean result = false;
+
+           // if the directory does not exist, create it
+           if (!theDir.exists()) {
+
+               try {
+                   System.out.println("creating directory: "+theDir.getPath());
+
+
+                   result=  theDir.mkdirs();
+               } catch (Exception se) {
+                   //handle it
+               }
+               if (result) {
+                   System.out.println("DIR created");
+               }
+           }
+       }
+
+
+
+    }
+
+    public static boolean createMainDirectory(){
 
         String filePath = Paths.get(mainPath).toString();
-
 
         File theDir = new File(filePath);
         boolean result = false;
@@ -116,15 +143,17 @@ public class UtilBase64Image {
                 System.out.println("creating directory: "+theDir.getPath());
 
 
-               result=  theDir.mkdirs();
+                theDir.mkdirs();
+                result=true;
             } catch (Exception se) {
-                //handle it
+               se.printStackTrace();
             }
             if (result) {
                 System.out.println("DIR created");
             }
-        }
+        }else return true;
 
+        return result;
     }
 
     public static void removeFile(String path) {

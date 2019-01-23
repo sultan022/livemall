@@ -22,7 +22,7 @@ public class ChatappApplication  extends WebMvcConfigurerAdapter {
 		SpringApplication.run(ChatappApplication.class, args);
 		
 	}
-	
+
 	
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {

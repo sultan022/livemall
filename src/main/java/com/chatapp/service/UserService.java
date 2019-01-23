@@ -1,12 +1,11 @@
 package com.chatapp.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import javax.validation.Valid;
 
-import com.chatapp.repository.UserPaginationRepository;
+import com.chatapp.domain.UserReviewRating;
+import com.chatapp.repository.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,8 +23,6 @@ import com.chatapp.dto.ProductDTO;
 import com.chatapp.dto.RateUserDTO;
 import com.chatapp.dto.UserDtoWithProducts;
 import com.chatapp.dto.UserLogin;
-import com.chatapp.repository.UserFollowerRepository;
-import com.chatapp.repository.UserRepository;
 import com.chatapp.util.CustomException;
 import com.chatapp.util.UtilBase64Image;
 
@@ -43,6 +40,12 @@ public class UserService {
 
 	@Autowired
 	UserPaginationRepository userPaginationRepository;
+
+	@Autowired
+	private UserReviewRatingRepository userReviewRatingRepository;
+
+	@Autowired
+	private ProductRepository productRepository;
 
 	public void signup(@Valid UserData userData) throws CustomException {
 
@@ -97,22 +100,21 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public UserDtoWithProducts getUserAndProductsDetails(String userEmail) throws CustomException, Exception {
+	public UserDtoWithProducts getUserAndProductsDetails(@Valid String email, @Valid Integer page) throws CustomException, Exception {
 
-		UserData userData = userRepository.findByEmailOptional(userEmail)
+		UserData userData = userRepository.findByEmailOptional(email)
 				.orElseThrow(() -> new CustomException("User Not Found"));
 		
 		userData.setProfilePic(UtilBase64Image.getImageFromDirectory(userData.getProfilePic()));
+		page = page*5-5;
+		if(page<0)
+			throw new CustomException("Incorrect Page Number");
+		userData.setProductCollection(productRepository.findProductByUserIdPagination(userData.getId(), page, 5));
 		userData.getProductCollection().forEach(product -> {
-
 			product.setProductMainImage(UtilBase64Image.getImageFromDirectory(product.getProductMainImage()));
-//			product.getImageCollection().forEach(image -> {
-//
-//				image.setImageString(UtilBase64Image.getImageFromDirectory(image.getImagePath()));
-//			});
+
 		});
 
-		
 		
 		userData.setFollowerCount(userRepository.getFollowerCount(userData.getId()));
 		userData.setFollowingCount(userRepository.getFollowingCount(userData.getId()));
@@ -210,11 +212,33 @@ public class UserService {
 
 	}
 
-	public void rateUser(RateUserDTO rateUserDto) {
 
-	
+	@Transactional
+	public void addReviewRating(RateUserDTO rateUserDto) {
+
+	Integer sourceUserId=  userRepository.findUserIdbyEmail(rateUserDto.getSourceUserEmail());
+		Integer targetUserId;
+	if(sourceUserId!=null)
+		targetUserId = userRepository.findUserIdbyEmail(rateUserDto.getTargetUserEmail());
+	else throw new CustomException("User "+rateUserDto.getSourceUserEmail()+" does not exist");
+	if(targetUserId!=null){
+
+		UserReviewRating userReviewRating = new UserReviewRating();
+		mapRateUserDTOToEntity(rateUserDto, userReviewRating, sourceUserId, targetUserId);
+		userReviewRatingRepository.save(userReviewRating);
+
+	}
+	else throw new CustomException("User "+rateUserDto.getTargetUserEmail()+" does not exist");
+
 	}
 
+	private void mapRateUserDTOToEntity(RateUserDTO rateUserDto, UserReviewRating userReviewRating, Integer sourceUserId, Integer targetUserId) {
+
+		userReviewRating.setRaterId(sourceUserId);
+		userReviewRating.setUserId(targetUserId);
+		userReviewRating.setRatingValue(rateUserDto.getRating());
+		userReviewRating.setReview(rateUserDto.getReview());
+	}
 
 
 }
