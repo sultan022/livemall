@@ -24,6 +24,7 @@ import com.chatapp.dto.AddFollower;
 import com.chatapp.dto.RateUserDTO;
 import com.chatapp.dto.UserDtoWithProducts;
 import com.chatapp.dto.UserLogin;
+import com.chatapp.dto.UserReviewDTO;
 import com.chatapp.response.CustomResponse;
 import com.chatapp.service.UserService;
 import com.chatapp.util.CustomException;
@@ -42,7 +43,9 @@ public class UserController {
 	@PostMapping("/signup")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<?> signup(@Valid @RequestBody UserData userData,
-			@Valid @RequestParam("lang") String lang) throws CustomException {
+			@Valid @RequestParam("lang") String lang,
+			@Valid @RequestHeader(value="channel") String channel)
+			throws CustomException {
 
 		CustomResponse<UserData> customResponse = new CustomResponse<>();
 
@@ -59,7 +62,9 @@ public class UserController {
 	@PostMapping("/login")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<?> login(@Valid @RequestBody UserLogin userLogin,
-			@Valid @RequestParam("lang") String lang) throws CustomException, Exception {
+			@Valid @RequestParam("lang") String lang,
+			@Valid @RequestHeader(value="channel") String channel)
+			throws CustomException, Exception {
 
 		CustomResponse<UserData> customResponse = new CustomResponse<>();
 
@@ -74,8 +79,10 @@ public class UserController {
 	@ApiOperation(value = "Edit User's account info")
 	@PutMapping("/accountinfo/{email}")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<?> editAccountInfo(@Valid @RequestBody UserData userData, @PathVariable String email,
-			@Valid @RequestParam("lang") String lang) throws CustomException {
+	public ResponseEntity<?> editAccountInfo(@Valid @RequestBody UserData userData, 
+			@Valid @RequestParam("lang") String lang,
+			@Valid @RequestHeader(value="channel") String channel,
+			@PathVariable String email) throws CustomException {
 
 		CustomResponse<UserData> customResponse = new CustomResponse<>();
 
@@ -92,17 +99,18 @@ public class UserController {
 	@ApiOperation(value = "Get a User and List of Products By User Email")
 	@GetMapping("/getuserandproducts")
 	@ResponseStatus(HttpStatus.OK)
-	public <T> DeferredResult<ResponseEntity<?>> fetchUsertoView(
-			@Valid @RequestHeader(value = "userEmail") String userEmail,
-			@Valid @RequestParam("lang") String lang,
-			@Valid @RequestParam("page") Integer page) throws CustomException, Exception {
+	public <T> DeferredResult<ResponseEntity<?>> fetchUserAndProducts(
+			@Valid @RequestHeader(value = "targetUserEmail") String userEmail,
+			 @Valid @RequestParam("page") Integer page,
+			 @Valid @RequestParam("lang") String lang,
+				@Valid @RequestHeader(value="channel") String channel) throws CustomException, Exception {
 
 		CustomResponse<UserDtoWithProducts> customResponse = new CustomResponse<>();
 
 		return DeferredResults.from(CompletableFuture.supplyAsync(() -> {
 
 			try {
-				customResponse.setData(userService.getUserAndProductsDetails(userEmail,page));
+				customResponse.setData(userService.getUserAndProductsDetails(userEmail, page));
 				customResponse.setMessage("Success");
 				customResponse.setResponseCode(HttpStatus.OK);
 			} catch (CustomException e) {
@@ -122,7 +130,8 @@ public class UserController {
 	@PostMapping("/addfollower")
 	@ResponseStatus(HttpStatus.OK)
 	public <T> ResponseEntity<?> addFollower(@Valid @RequestBody AddFollower addFollower,
-			@Valid @RequestParam("lang") String lang) throws CustomException, Exception {
+			@Valid @RequestParam("lang") String lang,
+			@Valid @RequestHeader(value="channel") String channel) throws CustomException, Exception {
 
 		CustomResponse<T> customResponse = new CustomResponse<>();
 
@@ -134,20 +143,20 @@ public class UserController {
 		return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
 
 	}
-	
-	
+
 	@ApiOperation(value = "provide rating for a user")
 	@PostMapping("/providereviewandrating")
 	@ResponseStatus(HttpStatus.OK)
 	public <T> DeferredResult<ResponseEntity<?>> addRating(@Valid @RequestBody RateUserDTO rateUserDto,
-			@Valid @RequestParam("lang") String lang) throws CustomException, Exception {
+			@Valid @RequestParam("lang") String lang,
+			@Valid @RequestHeader(value="channel") String channel) throws CustomException, Exception {
 
-		CustomResponse<T> customResponse = new CustomResponse<>();
+		CustomResponse<UserData> customResponse = new CustomResponse<>();
 
 		return DeferredResults.from(CompletableFuture.supplyAsync(() -> {
 
 			try {
-				userService.addReviewRating(rateUserDto);
+				customResponse.setData(userService.addReviewRating(rateUserDto));
 				customResponse.setMessage("Success");
 				customResponse.setResponseCode(HttpStatus.OK);
 			} catch (CustomException e) {
@@ -162,6 +171,37 @@ public class UserController {
 		}));
 
 	}
+	
+	
+	@ApiOperation(value = "get User Reviews")
+	@GetMapping("/getreviews")
+	@ResponseStatus(HttpStatus.OK)
+	public <T> DeferredResult<ResponseEntity<?>> getreviews(@Valid @RequestHeader(value = "targetUserEmail") String userEmail,
+			@Valid @RequestParam("lang") String lang,
+			@Valid @RequestHeader(value="channel") String channel,
+			@Valid @RequestParam("page") Integer page) throws CustomException, Exception {
+
+		CustomResponse<UserReviewDTO> customResponse = new CustomResponse<>();
+
+		return DeferredResults.from(CompletableFuture.supplyAsync(() -> {
+
+			try {
+				customResponse.setArrayData(userService.getReviews(userEmail, page));
+				customResponse.setMessage("Success");
+				customResponse.setResponseCode(HttpStatus.OK);
+			} catch (CustomException e) {
+				e.printStackTrace();
+				throw new CustomException(e.getMessage());
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new CustomException("Exception");
+			}
+
+			return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
+		}));
+
+	}
+	
 	
 	
 

@@ -23,7 +23,6 @@ public class UserFollower {
 	private Integer followerId;
 
 	public UserFollower(Integer userId, Integer followerId) {
-		super();
 		this.userId = userId;
 		this.followerId = followerId;
 	}

@@ -15,6 +15,9 @@ public class CategoryDTO {
 		this.lang = lang;
 	}
 
+	public CategoryDTO() {
+	}
+
 	public String getName() {
 		return name;
 	}

@@ -34,17 +34,18 @@ public class ProductController {
 	@Autowired
 	ProductService productService;
 
-//	@Autowired
-//	private ServletContext servletContext;
+	// @Autowired
+	// private ServletContext servletContext;
 
 	@ApiOperation(value = "Add a new product against a user")
 	@PostMapping("/")
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> addProduct(@Valid @RequestBody ProductDTO productDTO,
-			@RequestHeader(value = "userEmail") String userEmail, @Valid @RequestParam("lang") String lang)
+			@RequestHeader(value = "targetUserEmail") String userEmail,
+			@Valid @RequestParam("lang") String lang,
+			@Valid @RequestHeader(value="channel") String channel)
 			throws CustomException {
 
-		
 		CustomResponse<ProductDTO> customResponse = new CustomResponse();
 
 		Product product = productService.createProductFromProductDTOForNewProduct(productDTO);
@@ -60,9 +61,11 @@ public class ProductController {
 	@ApiOperation(value = "Get a Product and its images using product id and user email")
 	@GetMapping("/")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<?> getProduct(@Valid @RequestHeader(value = "userEmail") String userEmail,
+	public ResponseEntity<?> getProduct(@Valid @RequestHeader(value = "targetUserEmail") String userEmail,
 			@Valid @RequestHeader(value = "productName") String productName,
-			@Valid @RequestParam("lang") String lang) throws CustomException {
+			@Valid @RequestParam("lang") String lang,
+			@Valid @RequestHeader(value="channel") String channel)
+			throws CustomException {
 
 		CustomResponse<List<ProductDTO>> customResponse = new CustomResponse<>();
 
@@ -77,9 +80,10 @@ public class ProductController {
 	@ApiOperation(value = "delete a product and its images from the system")
 	@DeleteMapping("/")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<?> deleteProduct(@RequestHeader(value = "userEmail") String userEmail,
-			@RequestHeader(value = "productName") String productName, 
-			@Valid @RequestParam("lang") String lang)
+	public ResponseEntity<?> deleteProduct(@RequestHeader(value = "targetUserEmail") String userEmail,
+			@RequestHeader(value = "productName") String productName,
+			@Valid @RequestParam("lang") String lang,
+			@Valid @RequestHeader(value="channel") String channel)
 			throws CustomException {
 
 		CustomResponse<?> customResponse = new CustomResponse();
@@ -94,9 +98,11 @@ public class ProductController {
 	@ApiOperation(value = "Update a product and its images")
 	@PutMapping("/")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<?> updateProduct(@RequestHeader(value = "userEmail") String userEmail,
-			@RequestHeader(value = "productName") String productName, @Valid @RequestBody ProductDTO productDTO,
-			@Valid @RequestParam("lang") String lang) throws CustomException {
+	public ResponseEntity<?> updateProduct(@RequestHeader(value = "targetUserEmail") String userEmail,
+			@RequestHeader(value = "productName") String productName, 
+			@Valid @RequestBody ProductDTO productDTO,
+			@Valid @RequestParam("lang") String lang,
+			@Valid @RequestHeader(value="channel") String channel) throws CustomException {
 
 		CustomResponse<ProductDTO> customResponse = new CustomResponse();
 

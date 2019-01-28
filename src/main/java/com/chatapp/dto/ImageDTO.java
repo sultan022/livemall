@@ -13,6 +13,16 @@ public class ImageDTO {
 		return imageString;
 	}
 
+	public ImageDTO() {
+		super();
+	}
+
+	public ImageDTO(String imageString, String imagePath) {
+		super();
+		this.imageString = imageString;
+		this.imagePath = imagePath;
+	}
+
 	public void setImageString(String imageString) {
 		this.imageString = imageString;
 	}

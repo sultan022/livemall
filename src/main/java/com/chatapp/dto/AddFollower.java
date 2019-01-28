@@ -4,10 +4,18 @@ import javax.validation.constraints.NotNull;
 
 public class AddFollower {
 
+	public AddFollower() {
+		super();
+	}
+	public AddFollower(@NotNull String sourceUserEmail, @NotNull String targetUSerEmail) {
+		super();
+		this.sourceUserEmail = sourceUserEmail;
+		this.targetUserEmail = targetUSerEmail;
+	}
 	@NotNull
 	private String sourceUserEmail;
 	@NotNull
-	private String targetUSerEmail;
+	private String targetUserEmail;
 	
 	public String getSourceUserEmail() {
 		return sourceUserEmail;
@@ -16,10 +24,10 @@ public class AddFollower {
 		this.sourceUserEmail = sourceUserEmail;
 	}
 	public String getTargetUSerEmail() {
-		return targetUSerEmail;
+		return targetUserEmail;
 	}
 	public void setTargetUSerEmail(String targetUSerEmail) {
-		this.targetUSerEmail = targetUSerEmail;
+		this.targetUserEmail = targetUSerEmail;
 	}
 	
 	

@@ -17,6 +17,21 @@ public class ProductDTO {
 	@NotNull
 	private String productMainImage;
 
+	public ProductDTO() {
+		super();
+	}
+
+	public ProductDTO(@NotNull String name, String description, @NotNull String price, @NotNull String quantity,
+			@NotNull String productMainImage, List<ImageDTO> imageDTOList) {
+		super();
+		this.name = name;
+		this.description = description;
+		this.price = price;
+		this.quantity = quantity;
+		this.productMainImage = productMainImage;
+		this.imageDTOList = imageDTOList;
+	}
+
 	private List<ImageDTO> imageDTOList;
 
 	public String getName() {

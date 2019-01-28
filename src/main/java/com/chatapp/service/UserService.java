@@ -23,8 +23,10 @@ import com.chatapp.dto.ProductDTO;
 import com.chatapp.dto.RateUserDTO;
 import com.chatapp.dto.UserDtoWithProducts;
 import com.chatapp.dto.UserLogin;
+import com.chatapp.dto.UserReviewDTO;
 import com.chatapp.util.CustomException;
 import com.chatapp.util.UtilBase64Image;
+import com.chatapp.util.Utilities;
 
 @Service
 public class UserService {
@@ -46,6 +48,9 @@ public class UserService {
 
 	@Autowired
 	private ProductRepository productRepository;
+	
+	@Autowired
+	private Utilities utilities;
 
 	public void signup(@Valid UserData userData) throws CustomException {
 
@@ -118,6 +123,7 @@ public class UserService {
 		
 		userData.setFollowerCount(userRepository.getFollowerCount(userData.getId()));
 		userData.setFollowingCount(userRepository.getFollowingCount(userData.getId()));
+		userData.setProductCount(productRepository.countByUserId(userData.getId()));
 		UserDtoWithProducts userDtoWithProducts = new UserDtoWithProducts();
 
 		mapUserEntityToUserDto(userDtoWithProducts, userData);
@@ -213,31 +219,66 @@ public class UserService {
 	}
 
 
-	@Transactional
-	public void addReviewRating(RateUserDTO rateUserDto) {
+	public UserData addReviewRating(RateUserDTO rateUserDto) {
 
-	Integer sourceUserId=  userRepository.findUserIdbyEmail(rateUserDto.getSourceUserEmail());
-		Integer targetUserId;
-	if(sourceUserId!=null)
-		targetUserId = userRepository.findUserIdbyEmail(rateUserDto.getTargetUserEmail());
+		
+		if(rateUserDto.getRating()>5)
+			throw new CustomException("Incorrect Rating");
+		
+		Optional<UserData> userDataFromDB= userRepository.findByEmailOptional(rateUserDto.getSourceUserEmail());
+		Integer sourceUserId = null;
+		UserData targetUser;
+		
+		if(userDataFromDB.isPresent())
+			sourceUserId= userDataFromDB.get().getId(); 
+	if(sourceUserId!=null){
+		targetUser = userRepository.findUserbyEmail(rateUserDto.getTargetUserEmail());
+		
+	}
+		 
 	else throw new CustomException("User "+rateUserDto.getSourceUserEmail()+" does not exist");
-	if(targetUserId!=null){
+	if(targetUser!=null){
 
 		UserReviewRating userReviewRating = new UserReviewRating();
-		mapRateUserDTOToEntity(rateUserDto, userReviewRating, sourceUserId, targetUserId);
+		mapRateUserDTOToEntity(rateUserDto, userReviewRating, sourceUserId, targetUser.getId(), userDataFromDB.get());
 		userReviewRatingRepository.save(userReviewRating);
+		targetUser.setRatingSum(targetUser.getRatingSum()+rateUserDto.getRating());
+		targetUser.setRatingCount(targetUser.getRatingCount()+1);
+		targetUser.setAvgRating(utilities.setPrecision(Double.valueOf(targetUser.getRatingSum()/targetUser.getRatingCount())));
+		userRepository.save(targetUser);
+		targetUser.setProfilePic(UtilBase64Image.getImageFromDirectory(targetUser.getProfilePic()));
+		return targetUser;
 
 	}
 	else throw new CustomException("User "+rateUserDto.getTargetUserEmail()+" does not exist");
 
 	}
 
-	private void mapRateUserDTOToEntity(RateUserDTO rateUserDto, UserReviewRating userReviewRating, Integer sourceUserId, Integer targetUserId) {
+	private void mapRateUserDTOToEntity(RateUserDTO rateUserDto, UserReviewRating userReviewRating, Integer sourceUserId, Integer targetUserId, UserData userData) {
 
 		userReviewRating.setRaterId(sourceUserId);
 		userReviewRating.setUserId(targetUserId);
 		userReviewRating.setRatingValue(rateUserDto.getRating());
 		userReviewRating.setReview(rateUserDto.getReview());
+		userReviewRating.setRaterName(userData.getFullName());
+	}
+
+	public List<UserReviewDTO> getReviews(String userEmail, Integer page) {
+
+		page = page*5-5;
+		if(page<0)
+			throw new CustomException("Incorrect Page Number");
+		
+		Optional<UserData> userData = userRepository.findByEmailOptional(userEmail);
+		if(userData.isPresent()){
+			List<UserReviewDTO> userReviewDTOList = new ArrayList<>();
+			List<UserReviewRating> userReviews = userReviewRatingRepository.findReviewsByUserId(userData.get().getId(),page, 5).orElseThrow(()-> new CustomException("No Reviews Available"));
+		userReviews.forEach(userReview-> userReviewDTOList.add(modelMapper.map(userReview, UserReviewDTO.class)));	
+		return userReviewDTOList;
+		}
+			
+			
+		else throw new CustomException("User Does not Exists");
 	}
 
 

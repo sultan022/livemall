@@ -30,7 +30,7 @@ public class GlobalExceptionController {
 	    customResponse.setMessage("Validation Failed for One or more Parameters");
 	    
 	    
-	    customResponse.setMessageForUser(utilities.readMultiValueMessage("exception.user.message", req.getHeader("lang")));
+	    customResponse.setMessageForUser(utilities.readMultiValueMessage("exception.user.message",  req.getHeader("lang")));
 	    customResponse.setResponseCode(HttpStatus.BAD_REQUEST);
 	    return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.BAD_REQUEST);
 	  }
@@ -40,7 +40,7 @@ public class GlobalExceptionController {
 		    ex.printStackTrace();
 		    CustomResponse<T> customResponse = new CustomResponse<>();
 		    customResponse.setMessage(ex.getMessage());
-		    customResponse.setMessageForUser(utilities.readMultiValueMessage("exception.user.message", req.getHeader("lang")));
+		    customResponse.setMessageForUser(utilities.readMultiValueMessage("exception.user.message",  req.getHeader("lang")));
 		    customResponse.setResponseCode(HttpStatus.BAD_REQUEST);
 		    return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.BAD_REQUEST);
 		  }
@@ -50,7 +50,7 @@ public class GlobalExceptionController {
 		    ex.printStackTrace();
 		    CustomResponse<T> customResponse = new CustomResponse<>();
 		    customResponse.setMessage("Exception");
-		    customResponse.setMessageForUser(utilities.readMultiValueMessage("exception.user.message", req.getHeader("lang")));
+		    customResponse.setMessageForUser(utilities.readMultiValueMessage("exception.user.message",  req.getHeader("lang")));
 		    customResponse.setResponseCode(HttpStatus.BAD_REQUEST);
 		    return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.BAD_REQUEST);
 		  }
@@ -61,7 +61,7 @@ public class GlobalExceptionController {
 		    ex.printStackTrace();
 		    CustomResponse<T> customResponse = new CustomResponse<>();
 		    customResponse.setMessage(ex.getMessage());
-		    customResponse.setMessageForUser(utilities.readMultiValueMessage("exception.user.message", req.getHeader("lang")));
+		    customResponse.setMessageForUser(utilities.readMultiValueMessage("exception.user.message",  req.getHeader("lang")));
 		    customResponse.setResponseCode(HttpStatus.BAD_REQUEST);
 		    return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.BAD_REQUEST);
 		  }
@@ -71,7 +71,7 @@ public class GlobalExceptionController {
 		    ex.printStackTrace();
 		    CustomResponse<T> customResponse = new CustomResponse<>();
 		    customResponse.setMessage("Exception");
-		    customResponse.setMessageForUser(utilities.readMultiValueMessage("exception.user.message", req.getHeader("lang")));
+		    customResponse.setMessageForUser(utilities.readMultiValueMessage("exception.user.message",  req.getHeader("lang")));
 		    customResponse.setResponseCode(HttpStatus.BAD_REQUEST);
 		    return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.BAD_REQUEST);
 		  }
