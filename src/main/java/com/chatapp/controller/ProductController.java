@@ -1,9 +1,13 @@
 package com.chatapp.controller;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import javax.validation.Valid;
 
+import com.chatapp.dto.UserDtoWithProducts;
+import com.chatapp.dto.UserProductsForMenu;
+import com.chatapp.util.DeferredResults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +29,7 @@ import com.chatapp.service.ProductService;
 import com.chatapp.util.CustomException;
 
 import io.swagger.annotations.ApiOperation;
+import org.springframework.web.context.request.async.DeferredResult;
 
 @RestController
 @RequestMapping("/rest/product")
@@ -116,5 +121,38 @@ public class ProductController {
 
 		return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
 	}
+
+
+	@ApiOperation(value = "Get list of products for user's menu section by email")
+	@GetMapping("/getproductsformenu")
+	@ResponseStatus(HttpStatus.OK)
+	public <T> DeferredResult<ResponseEntity<?>> getUserProductsForMenu(
+			@Valid @RequestHeader(value = "userEmail") String userEmail,
+			@Valid @RequestParam("page") Integer page,
+			@Valid @RequestParam("lang") String lang,
+			@Valid @RequestHeader(value = "channel") String channel) throws CustomException, Exception {
+
+		CustomResponse<UserProductsForMenu> customResponse = new CustomResponse<>();
+
+		return DeferredResults.from(CompletableFuture.supplyAsync(() -> {
+
+			try {
+				customResponse.setArrayData(productService.getUserProductsForMenu(userEmail, page));
+				customResponse.setMessage("Success");
+				customResponse.setResponseCode(HttpStatus.OK);
+			} catch (CustomException e) {
+				e.printStackTrace();
+				throw new CustomException(e.getMessage());
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new CustomException("Exception");
+			}
+
+			return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
+		}));
+
+	}
+
+
 
 }
