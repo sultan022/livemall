@@ -19,67 +19,74 @@ import com.chatapp.util.UtilBase64Image;
 @Service
 public class CategoryService {
 
-	@Autowired
-	CategoryRepository categoryRepository;
+    @Autowired
+    CategoryRepository categoryRepository;
 
-	@Autowired
-	ModelMapper modelMapper;
+    @Autowired
+    ModelMapper modelMapper;
 
-	public List<CategoryDTO> getCategories(String lang) {
+    public List<CategoryDTO> getCategories(String lang, String channel) {
 
-		 
-		
-		List<CategoryDTO> categories = categoryRepository.findCategoriesByLang(lang).
-				stream().
-				filter(entity -> entity != null)
-				.map(mapper -> mapCategoryToCategoryDTO(mapper)).collect(Collectors.toList());
-		
-		if(categories.isEmpty())
-			throw new CustomException("No Categories Exists");
-		
-		return categories;
 
-	}
+        List<CategoryDTO> categories = categoryRepository.findCategoriesByLang(lang).
+                stream().
+                filter(entity -> entity != null)
+                .map(mapper -> mapCategoryToCategoryDTO(mapper, channel)).collect(Collectors.toList());
 
-	public Category createCategoryFromCategoryDTO(AddCategoryDTO addCategoryDTO) {
+        if (categories.isEmpty())
+            throw new CustomException("No Categories Exists");
 
-			return modelMapper.map(addCategoryDTO, Category.class);
-	
+        return categories;
 
-	}
+    }
 
-	public Category saveCategory(Category category) {
+    public Category createCategoryFromCategoryDTO(AddCategoryDTO addCategoryDTO) {
 
-		
+        return modelMapper.map(addCategoryDTO, Category.class);
 
-			Optional<Category> categoryFromDB = categoryRepository.checkCategoryExistsByDefaultName(category.getCategoryDefaultName(),
-					category.getCategoryName(),
-					category.getLang());
-			
-			if(categoryFromDB.isPresent())
-				throw new CustomException("Category Already Exists by "+category.getCategoryDefaultName()+" name");
-			
-			String iconPath = UtilBase64Image.saveCategoryIconInDirectory(category.getCategoryIcon(),
-					category.getCategoryDefaultName());
 
-			if (iconPath != null) {
-				category.setCategoryIcon(iconPath);
-			} else
-				throw new CustomException("Exception while creating image");
+    }
 
-			categoryRepository.save(category);
+    public Category saveCategory(Category category) {
 
-			return category;
-		
 
-	}
+        Optional<Category> categoryFromDB = categoryRepository.checkCategoryExistsByDefaultName(category.getCategoryDefaultName(),
+                category.getLang());
 
-	public CategoryDTO mapCategoryToCategoryDTO(Category category) {
+        if (categoryFromDB.isPresent())
+            throw new CustomException("Category Already Exists by name" + category.getCategoryDefaultName() +" and lang " + category.getLang());
 
-		String categoryIcon = UtilBase64Image.getImageFromDirectory(category.getCategoryIcon());
 
-		return new CategoryDTO(category.getCategoryName(), categoryIcon, category.getCategoryDefaultName(),
-				category.getLang());
-	}
+        String iconPathIos = UtilBase64Image.saveCategoryIconInDirectory(category.getCategoryIosIcon(),
+                category.getCategoryDefaultName(), "ios");
+
+        String iconPathAndroid = UtilBase64Image.saveCategoryIconInDirectory(category.getCategoryAndroidIcon(),
+                category.getCategoryDefaultName(), "android");
+
+        if (iconPathIos != null && iconPathAndroid != null) {
+            category.setCategoryAndroidIcon(iconPathAndroid);
+            category.setCategoryIosIcon(iconPathIos);
+        } else
+            throw new CustomException("Exception while creating image");
+
+        categoryRepository.save(category);
+
+        return category;
+
+
+    }
+
+    public CategoryDTO mapCategoryToCategoryDTO(Category category, String channel) {
+        String categoryIcon = "";
+
+        if (channel.equalsIgnoreCase("ios"))
+            categoryIcon = UtilBase64Image.getImageFromDirectory(category.getCategoryIosIcon());
+        else if (channel.equalsIgnoreCase("android"))
+            categoryIcon = UtilBase64Image.getImageFromDirectory(category.getCategoryAndroidIcon());
+
+
+        return new CategoryDTO(category.getCategoryName(), categoryIcon, category.getCategoryDefaultName(),
+                category.getLang());
+    }
 
 }

@@ -34,7 +34,7 @@ public class CategoryController {
 		return DeferredResults.from(CompletableFuture.supplyAsync(() -> {
 
 			try {
-				customResponse.setArrayData(categoryService.getCategories("en"));
+				customResponse.setArrayData(categoryService.getCategories(lang, channel));
 				customResponse.setMessage("Success");
 				customResponse.setResponseCode(HttpStatus.OK);
 			} catch (CustomException e) {

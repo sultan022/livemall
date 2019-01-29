@@ -1,5 +1,8 @@
 package com.chatapp.dto;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class UserReviewDTO {
 
 	String raterName;

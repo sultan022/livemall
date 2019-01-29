@@ -45,11 +45,16 @@ public class UtilBase64Image {
         return mainPath + path + "/" + path + "profilepic.png";
     }
 
-    public static String saveCategoryIconInDirectory(String base64Image, String path) {
+    public static String saveCategoryIconInDirectory(String base64Image, String path, String channel) {
+
+        if(channel.equalsIgnoreCase("ios"))
+            path= "categories/ios/"+path;
+        else if (channel.equalsIgnoreCase("android"))
+            path= "categories/android/"+path;
 
         createDirectory(path);
 
-        try (FileOutputStream imageOutFile = new FileOutputStream(mainPath + path + "/" + path + "icon.png")) {
+        try (FileOutputStream imageOutFile = new FileOutputStream(mainPath + path + "/" + "icon.png")) {
             // Converting a Base64 String into Image byte array
             byte[] imageByteArray = Base64.getDecoder().decode(base64Image);
             imageOutFile.write(imageByteArray);
@@ -59,7 +64,7 @@ public class UtilBase64Image {
             System.out.println("Exception while reading the Image " + ioe);
         }
 
-        return mainPath + path + "/" + path + "icon.png";
+        return mainPath + path + "/" + "icon.png";
     }
 
 

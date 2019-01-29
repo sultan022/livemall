@@ -1,5 +1,9 @@
 package com.chatapp.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +13,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "category")
+@Data @AllArgsConstructor @NoArgsConstructor
 public class Category {
 
 	@Id
@@ -22,61 +27,15 @@ public class Category {
 	@Column(name = "category_name")
 	private String categoryName;
 
-	@Column(name = "category_icon")
-	private String categoryIcon;
+	@Column(name = "category_ios_icon")
+	private String categoryIosIcon;
+
+	@Column(name = "category_android_icon")
+	private String categoryAndroidIcon;
 
 	@Column(name = "lang")
 	private String lang;
 
-	private Category() {
 
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public Category(String categoryDefaultName, String categoryName, String categoryIcon, String lang) {
-		this.categoryDefaultName = categoryDefaultName;
-		this.categoryName = categoryName;
-		this.categoryIcon = categoryIcon;
-		this.lang = lang;
-	}
-
-	public String getCategoryIcon() {
-		return categoryIcon;
-	}
-
-	public void setCategoryIcon(String categoryIcon) {
-		this.categoryIcon = categoryIcon;
-	}
-
-	public String getCategoryDefaultName() {
-		return categoryDefaultName;
-	}
-
-	public void setCategoryDefaultName(String categoryDefaultName) {
-		this.categoryDefaultName = categoryDefaultName;
-	}
-
-	public String getCategoryName() {
-		return categoryName;
-	}
-
-	public void setCategoryName(String categoryName) {
-		this.categoryName = categoryName;
-	}
-
-	public String getLang() {
-		return lang;
-	}
-
-	public void setLang(String lang) {
-		this.lang = lang;
-	}
 
 }

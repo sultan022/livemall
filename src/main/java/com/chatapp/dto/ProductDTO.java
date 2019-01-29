@@ -1,9 +1,12 @@
 package com.chatapp.dto;
 
+import lombok.AllArgsConstructor;
+
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+@AllArgsConstructor
 public class ProductDTO {
 
 	@NotNull
@@ -19,17 +22,6 @@ public class ProductDTO {
 
 	public ProductDTO() {
 		super();
-	}
-
-	public ProductDTO(@NotNull String name, String description, @NotNull String price, @NotNull String quantity,
-			@NotNull String productMainImage, List<ImageDTO> imageDTOList) {
-		super();
-		this.name = name;
-		this.description = description;
-		this.price = price;
-		this.quantity = quantity;
-		this.productMainImage = productMainImage;
-		this.imageDTOList = imageDTOList;
 	}
 
 	private List<ImageDTO> imageDTOList;

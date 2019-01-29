@@ -41,7 +41,7 @@ public class ProductController {
 	@PostMapping("/")
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> addProduct(@Valid @RequestBody ProductDTO productDTO,
-			@RequestHeader(value = "targetUserEmail") String userEmail,
+			@RequestHeader(value = "userEmail") String userEmail,
 			@Valid @RequestParam("lang") String lang,
 			@Valid @RequestHeader(value="channel") String channel)
 			throws CustomException {
