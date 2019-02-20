@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import com.chatapp.dto.response.CategoryResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,10 +26,9 @@ public class CategoryService {
     @Autowired
     ModelMapper modelMapper;
 
-    public List<CategoryDTO> getCategories(String lang, String channel) {
+    public CategoryDTO getCategories(String lang, String channel) {
 
-
-        List<CategoryDTO> categories = categoryRepository.findCategoriesByLang(lang).
+        List<CategoryResponse> categories = categoryRepository.findCategoriesByLang(lang).
                 stream().
                 filter(entity -> entity != null)
                 .map(mapper -> mapCategoryToCategoryDTO(mapper, channel)).collect(Collectors.toList());
@@ -36,7 +36,8 @@ public class CategoryService {
         if (categories.isEmpty())
             throw new CustomException("No Categories Exists");
 
-        return categories;
+        CategoryDTO categoryDTO = new CategoryDTO(categories);
+        return categoryDTO;
 
     }
 
@@ -76,7 +77,7 @@ public class CategoryService {
 
     }
 
-    public CategoryDTO mapCategoryToCategoryDTO(Category category, String channel) {
+    public CategoryResponse mapCategoryToCategoryDTO(Category category, String channel) {
         String categoryIcon = "";
 
         if (channel.equalsIgnoreCase("ios"))
@@ -85,7 +86,7 @@ public class CategoryService {
             categoryIcon = UtilBase64Image.getImageFromDirectory(category.getCategoryAndroidIcon());
 
 
-        return new CategoryDTO(category.getCategoryName(), categoryIcon, category.getCategoryDefaultName(),
+        return new CategoryResponse(category.getCategoryName(), categoryIcon, category.getCategoryDefaultName(),
                 category.getLang());
     }
 

@@ -39,8 +39,6 @@ public class ProductController {
 	@Autowired
 	ProductService productService;
 
-	// @Autowired
-	// private ServletContext servletContext;
 
 	@ApiOperation(value = "Add a new product against a user")
 	@PostMapping("/")
@@ -57,8 +55,9 @@ public class ProductController {
 
 		productService.saveProduct(product, userEmail);
 		customResponse.setData(productDTO);
-		customResponse.setMessage("Success");
-		customResponse.setResponseCode(HttpStatus.OK);
+		customResponse.setMessage("");
+		customResponse.setCallStatus("true");
+		customResponse.setResultCode("00");
 
 		return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
 	}
@@ -75,8 +74,9 @@ public class ProductController {
 		CustomResponse<List<ProductDTO>> customResponse = new CustomResponse<>();
 
 		customResponse.setData(productService.getProducts(userEmail, productName));
-		customResponse.setMessage("Success");
-		customResponse.setResponseCode(HttpStatus.OK);
+		customResponse.setMessage("");
+		customResponse.setCallStatus("true");
+		customResponse.setResultCode("00");
 
 		return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
 
@@ -94,8 +94,9 @@ public class ProductController {
 		CustomResponse<?> customResponse = new CustomResponse();
 
 		productService.delProduct(productName, userEmail);
-		customResponse.setMessage("Success");
-		customResponse.setResponseCode(HttpStatus.OK);
+		customResponse.setMessage("");
+		customResponse.setCallStatus("true");
+		customResponse.setResultCode("00");
 
 		return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
 	}
@@ -116,8 +117,9 @@ public class ProductController {
 		productService.saveProduct(product, userEmail);
 
 		customResponse.setData(productDTO);
-		customResponse.setMessage("Success");
-		customResponse.setResponseCode(HttpStatus.OK);
+		customResponse.setMessage("");
+		customResponse.setCallStatus("true");
+		customResponse.setResultCode("00");
 
 		return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
 	}
@@ -137,15 +139,16 @@ public class ProductController {
 		return DeferredResults.from(CompletableFuture.supplyAsync(() -> {
 
 			try {
-				customResponse.setArrayData(productService.getUserProductsForMenu(userEmail, page));
-				customResponse.setMessage("Success");
-				customResponse.setResponseCode(HttpStatus.OK);
+				customResponse.setData(productService.getUserProductsForMenu(userEmail, page));
+				customResponse.setMessage("");
+				customResponse.setCallStatus("true");
+				customResponse.setResultCode("00");
 			} catch (CustomException e) {
 				e.printStackTrace();
 				throw new CustomException(e.getMessage());
 			} catch (Exception e) {
 				e.printStackTrace();
-				throw new CustomException("Exception");
+				throw new CustomException("An error has occurred");
 			}
 
 			return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);

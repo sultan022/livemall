@@ -2,6 +2,7 @@ package com.chatapp.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -20,4 +21,6 @@ public interface CategoryRepository extends CrudRepository<Category, Integer> {
 	Optional<Category> checkCategoryExistsByDefaultName(@Param("category_default_name") String categoryDefaultName,
 			@Param("lang") String lang);
 
+	@Query(value = "select distinct(category_default_name) from category", nativeQuery = true)
+    Set<String> getCategoryNames(String lang);
 }

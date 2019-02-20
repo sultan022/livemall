@@ -34,9 +34,11 @@ public class CategoryController {
 		return DeferredResults.from(CompletableFuture.supplyAsync(() -> {
 
 			try {
-				customResponse.setArrayData(categoryService.getCategories(lang, channel));
-				customResponse.setMessage("Success");
-				customResponse.setResponseCode(HttpStatus.OK);
+				//customResponse.setData(categoryService.getCategories(lang, channel).toString());
+				customResponse.setData(categoryService.getCategories(lang, channel));
+				customResponse.setMessage("");
+				customResponse.setCallStatus("true");
+				customResponse.setResultCode("00");
 			} catch (CustomException e) {
 				e.printStackTrace();
 				throw new CustomException(e.getMessage());
@@ -61,8 +63,9 @@ public class CategoryController {
 						.thenApply(category -> categoryService.saveCategory(category)).thenApply(createdCategory -> {
 
 							customResponse.setData(addCategoryDTO);
-							customResponse.setMessage("Success");
-							customResponse.setResponseCode(HttpStatus.OK);
+							customResponse.setMessage("");
+							customResponse.setCallStatus("true");
+							customResponse.setResultCode("00");
 
 							return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
 						}));

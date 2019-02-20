@@ -2,6 +2,7 @@ package com.chatapp.repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -39,4 +40,10 @@ public interface UserRepository extends CrudRepository<UserData, Integer> {
 
 	@Query(value = "select * from user_data where category=:category limit :start,:end", nativeQuery = true)
 	List<UserData> findAllByCategory(@Param("category") String category,@Param("start") Integer start, @Param("end") Integer end);
+
+	@Query(value="select distinct(city) from user_data", nativeQuery = true)
+	Set<String> getCities(String lang);
+
+	@Query(value="select distinct(country) from user_data", nativeQuery = true)
+	Set<String> getCountries(String lang);
 }

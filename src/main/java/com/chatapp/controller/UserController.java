@@ -48,8 +48,9 @@ public class UserController {
 
         userService.signup(userData);
         customResponse.setData(userData);
-        customResponse.setMessage("Success");
-        customResponse.setResponseCode(HttpStatus.OK);
+        customResponse.setMessage("");
+        customResponse.setCallStatus("true");
+        customResponse.setResultCode("00");
 
         return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
 
@@ -66,8 +67,9 @@ public class UserController {
         CustomResponse<UserData> customResponse = new CustomResponse<>();
 
         customResponse.setData(userService.login(userLogin));
-        customResponse.setMessage("Success");
-        customResponse.setResponseCode(HttpStatus.OK);
+        customResponse.setMessage("");
+        customResponse.setCallStatus("true");
+        customResponse.setResultCode("00");
 
         return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
 
@@ -86,8 +88,9 @@ public class UserController {
         userService.editAccountInfo(userData, email);
 
         customResponse.setData(userData);
-        customResponse.setMessage("Success");
-        customResponse.setResponseCode(HttpStatus.OK);
+        customResponse.setMessage("");
+        customResponse.setCallStatus("true");
+        customResponse.setResultCode("00");
 
         return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
 
@@ -108,14 +111,15 @@ public class UserController {
 
             try {
                 customResponse.setData(userService.getUserAndProductsDetails(userEmail, page));
-                customResponse.setMessage("Success");
-                customResponse.setResponseCode(HttpStatus.OK);
+                customResponse.setMessage("");
+                customResponse.setCallStatus("true");
+                customResponse.setResultCode("00");
             } catch (CustomException e) {
                 e.printStackTrace();
                 throw new CustomException(e.getMessage());
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new CustomException("Exception");
+                throw new CustomException("An error has occurred");
             }
 
             return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
@@ -133,9 +137,9 @@ public class UserController {
         CustomResponse<T> customResponse = new CustomResponse<>();
 
         userService.addFollower(addFollower);
-        customResponse.setMessage("Success");
-        customResponse.setMessageForUser("Successfully Followed");
-        customResponse.setResponseCode(HttpStatus.OK);
+        customResponse.setMessage("");
+        customResponse.setCallStatus("true");
+        customResponse.setResultCode("00");
 
         return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
 
@@ -154,14 +158,15 @@ public class UserController {
 
             try {
                 customResponse.setData(userService.addReviewRating(rateUserDto));
-                customResponse.setMessage("Success");
-                customResponse.setResponseCode(HttpStatus.OK);
+                customResponse.setMessage("");
+                customResponse.setCallStatus("true");
+                customResponse.setResultCode("00");
             } catch (CustomException e) {
                 e.printStackTrace();
                 throw new CustomException(e.getMessage());
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new CustomException("Exception");
+                throw new CustomException("An error has occurred");
             }
 
             return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
@@ -183,15 +188,16 @@ public class UserController {
         return DeferredResults.from(CompletableFuture.supplyAsync(() -> {
 
             try {
-                customResponse.setArrayData(userService.getReviews(userEmail, page));
-                customResponse.setMessage("Success");
-                customResponse.setResponseCode(HttpStatus.OK);
+                customResponse.setData(userService.getReviews(userEmail, page));
+                customResponse.setMessage("");
+                customResponse.setCallStatus("true");
+                customResponse.setResultCode("00");
             } catch (CustomException e) {
                 e.printStackTrace();
                 throw new CustomException(e.getMessage());
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new CustomException("Exception");
+                throw new CustomException("An error has occurred");
             }
 
             return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
@@ -213,15 +219,16 @@ public class UserController {
         return DeferredResults.from(CompletableFuture.supplyAsync(() -> {
 
             try {
-                customResponse.setArrayData(userService.searchUsers(searchBy,toSearch, page));
-                customResponse.setMessage("Success");
-                customResponse.setResponseCode(HttpStatus.OK);
+                customResponse.setData(userService.searchUsers(searchBy,toSearch, page));
+                customResponse.setMessage("");
+                customResponse.setCallStatus("true");
+                customResponse.setResultCode("00");
             } catch (CustomException e) {
                 e.printStackTrace();
                 throw new CustomException(e.getMessage());
             } catch (Exception e) {
                 e.printStackTrace();
-                throw new CustomException("Exception");
+                throw new CustomException("An error has occurred");
             }
 
             return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);

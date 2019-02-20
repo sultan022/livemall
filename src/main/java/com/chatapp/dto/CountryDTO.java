@@ -1,17 +1,13 @@
 package com.chatapp.dto;
 
-import com.chatapp.dto.response.CategoryResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 @Data @AllArgsConstructor @NoArgsConstructor
-public class CategoryDTO {
+public class CountryDTO {
 
-	private List<CategoryResponse> categories;
-
-
-
+    private Set<String> countries;
 }

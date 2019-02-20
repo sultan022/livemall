@@ -7,6 +7,8 @@ import javax.validation.Valid;
 import com.chatapp.domain.*;
 import com.chatapp.dto.*;
 import com.chatapp.repository.*;
+import com.chatapp.response.UserReviewResponse;
+import com.chatapp.response.UserSearchResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -250,7 +252,7 @@ public class UserService {
         userReviewRating.setRaterName(userData.getFullName());
     }
 
-    public List<UserReviewDTO> getReviews(String userEmail, Integer page) {
+    public UserReviewDTO getReviews(String userEmail, Integer page) {
 
         page = page * 5 - 5;
         if (page < 0)
@@ -258,23 +260,25 @@ public class UserService {
 
         Optional<UserData> userData = userRepository.findByEmailOptional(userEmail);
         if (userData.isPresent()) {
-            List<UserReviewDTO> userReviewDTOList = new ArrayList<>();
+            List<UserReviewResponse> userReviewResponses = new ArrayList<>();
             Optional<List<UserReviewRating>> userReviews = userReviewRatingRepository.findReviewsByUserId(userData.get().getId(), page, 5);
-            userReviews.ifPresent(reviews-> { reviews.forEach(userReview -> userReviewDTOList.add(modelMapper.map(userReview, UserReviewDTO.class)));});
+            userReviews.ifPresent(reviews -> {
+                reviews.forEach(userReview -> userReviewResponses.add(modelMapper.map(userReview, UserReviewResponse.class)));
+            });
 
-            return userReviewDTOList;
+            return new UserReviewDTO(userReviewResponses);
         } else throw new CustomException("User Does not Exists");
     }
 
 
-    public List<UserSearchResultDTO> searchUsers(SearchBy searchBy, String toSearch, Integer page) {
+    public UserSearchResultDTO searchUsers(SearchBy searchBy, String toSearch, Integer page) {
 
         page = page * 5 - 5;
         if (page < 0)
             throw new CustomException("Incorrect Page Number");
 
-        List<UserData> list=null;
-        List<UserSearchResultDTO> userSearchResultDTOS = new ArrayList<>();
+        List<UserData> list = null;
+        List<UserSearchResponse> userSearchResponses = new ArrayList<>();
 
         switch (searchBy) {
             case COUNTRY:
@@ -288,17 +292,14 @@ public class UserService {
                 break;
 
 
-
-
         }
 
 
-
-        Optional.ofNullable(list).ifPresent(listFromDB-> listFromDB.forEach(userFromDB-> {
+        Optional.ofNullable(list).ifPresent(listFromDB -> listFromDB.forEach(userFromDB -> {
             userFromDB.setProfilePic(UtilBase64Image.getImageFromDirectory(userFromDB.getProfilePic()));
-            userSearchResultDTOS.add(modelMapper.map(userFromDB, UserSearchResultDTO.class));
+            userSearchResponses.add(modelMapper.map(userFromDB, UserSearchResponse.class));
         }));
 
-        return userSearchResultDTOS;
+        return new UserSearchResultDTO(userSearchResponses);
     }
 }

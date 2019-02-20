@@ -1,13 +1,17 @@
 package com.chatapp.dto;
 
+import com.chatapp.response.UserProductsResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data @AllArgsConstructor @NoArgsConstructor
 public class UserProductsForMenu {
 
-    private String name;
-    private String productMainImage;
-    private String price;
+
+    private List<UserProductsResponse> userProductsResponseList;
+
+
 }

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import com.chatapp.dto.UserProductsForMenu;
+import com.chatapp.response.UserProductsResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -247,7 +248,7 @@ public class ProductService {
         return "";
     }
 
-    public List<UserProductsForMenu> getUserProductsForMenu(String userEmail, Integer page) {
+    public UserProductsForMenu getUserProductsForMenu(String userEmail, Integer page) {
 
         page = page * 5 - 5;
         if (page < 0)
@@ -261,18 +262,17 @@ public class ProductService {
         List<Product> products = productRepository.findProductByUserIdPagination(userId, page, 5)
                 .stream()
                 .collect(Collectors.toList());
-        List<UserProductsForMenu> userProductsForMenu = new ArrayList<>();
+        List<UserProductsResponse> userProductsResponses = new ArrayList<>();
 
         if (products != null)
             products.forEach(product -> {
                 product.setProductMainImage(UtilBase64Image.getImageFromDirectory(product.getProductMainImage()));
 
-               userProductsForMenu.add(modelMapper.map(product, UserProductsForMenu.class));
+                userProductsResponses.add(modelMapper.map(product, UserProductsResponse.class));
 
             });
 
-
-        return userProductsForMenu;
+        return new UserProductsForMenu(userProductsResponses);
 
     }
 }
