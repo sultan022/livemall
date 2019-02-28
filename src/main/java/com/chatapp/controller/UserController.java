@@ -237,4 +237,68 @@ public class UserController {
     }
 
 
+    @ApiOperation(value = "Get followers against a user")
+    @GetMapping("/getfollowers")
+    @ResponseStatus(HttpStatus.OK)
+    public <T> DeferredResult<ResponseEntity<?>> getFollowersAgainstUser(@Valid @RequestHeader(value = "channel") String channel,
+                                                                         @Valid @RequestHeader(value = "userEmail") String userEmail,
+                                                             @Valid @RequestParam("page") Integer page,
+                                                             @Valid @RequestParam("lang") String lang) throws CustomException, Exception {
+
+        CustomResponse<UserFollowersDTO> customResponse = new CustomResponse<>();
+
+        return DeferredResults.from(CompletableFuture.supplyAsync(() -> {
+
+            try {
+                customResponse.setData(userService.getUserFollowers(userEmail, page));
+                customResponse.setMessage("");
+                customResponse.setCallStatus("true");
+                customResponse.setResultCode("00");
+            } catch (CustomException e) {
+                e.printStackTrace();
+                throw new CustomException(e.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new CustomException("An error has occurred");
+            }
+
+            return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
+        }));
+
+    }
+
+    @ApiOperation(value = "Get followings against a user")
+    @GetMapping("/getfollowings")
+    @ResponseStatus(HttpStatus.OK)
+    public <T> DeferredResult<ResponseEntity<?>> getFollowingsAgainstUser(@Valid @RequestHeader(value = "channel") String channel,
+                                                                         @Valid @RequestHeader(value = "userEmail") String userEmail,
+                                                                         @Valid @RequestParam("page") Integer page,
+                                                                         @Valid @RequestParam("lang") String lang) throws CustomException, Exception {
+
+        CustomResponse<UserFollowingDTO> customResponse = new CustomResponse<>();
+
+        return DeferredResults.from(CompletableFuture.supplyAsync(() -> {
+
+            try {
+                customResponse.setData(userService.getUserFollowings(userEmail, page));
+                customResponse.setMessage("");
+                customResponse.setCallStatus("true");
+                customResponse.setResultCode("00");
+            } catch (CustomException e) {
+                e.printStackTrace();
+                throw new CustomException(e.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new CustomException("An error has occurred");
+            }
+
+            return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
+        }));
+
+    }
+
+
+
+
+
 }

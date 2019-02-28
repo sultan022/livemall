@@ -1,10 +1,12 @@
 package com.chatapp.service;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+import com.chatapp.domain.Product;
 import com.chatapp.dto.response.CategoryResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import com.chatapp.dto.CategoryDTO;
 import com.chatapp.repository.CategoryRepository;
 import com.chatapp.util.CustomException;
 import com.chatapp.util.UtilBase64Image;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CategoryService {
@@ -31,6 +34,7 @@ public class CategoryService {
         List<CategoryResponse> categories = categoryRepository.findCategoriesByLang(lang).
                 stream().
                 filter(entity -> entity != null)
+                .sorted((entity1,entity2) -> entity1.getCategoryName().compareTo(entity2.getCategoryName()) )
                 .map(mapper -> mapCategoryToCategoryDTO(mapper, channel)).collect(Collectors.toList());
 
         if (categories.isEmpty())
@@ -55,7 +59,7 @@ public class CategoryService {
                 category.getLang());
 
         if (categoryFromDB.isPresent())
-            throw new CustomException("Category Already Exists by name" + category.getCategoryDefaultName() +" and lang " + category.getLang());
+            throw new CustomException("Category Already Exists by name" + category.getCategoryDefaultName() + " and lang " + category.getLang());
 
 
         String iconPathIos = UtilBase64Image.saveCategoryIconInDirectory(category.getCategoryIosIcon(),
@@ -90,4 +94,18 @@ public class CategoryService {
                 category.getLang());
     }
 
+    @Transactional
+    public void deleteCategory(String categoryDefaultName) {
+
+        Category category = categoryRepository.findCategoryByDefaultName(categoryDefaultName);
+        if (category == null)
+            throw new CustomException("Category Does not Exists");
+
+        UtilBase64Image.removeFile(category.getCategoryAndroidIcon());
+        UtilBase64Image.removeFile(category.getCategoryIosIcon());
+
+        categoryRepository.delete(category);
+
+
+    }
 }

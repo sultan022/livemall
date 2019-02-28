@@ -72,4 +72,34 @@ public class CategoryController {
 
 	}
 
+
+	@ApiOperation(value = "Add a new Category")
+	@DeleteMapping("/{categoryDefaultName}")
+	@ResponseStatus(HttpStatus.OK)
+	public <T> DeferredResult<ResponseEntity<?>> deleteCategory(@Valid @RequestParam("lang") String lang,
+															 @Valid @RequestHeader("categoryDefaultName") String categoryDefaultName,
+															 @Valid @RequestHeader(value="channel") String channel) {
+
+		CustomResponse<?> customResponse = new CustomResponse<>();
+
+		return DeferredResults.from(CompletableFuture.supplyAsync(() -> {
+
+			try {
+
+				categoryService.deleteCategory(categoryDefaultName);
+				customResponse.setMessage("");
+				customResponse.setCallStatus("true");
+				customResponse.setResultCode("00");
+			} catch (CustomException e) {
+				e.printStackTrace();
+				throw new CustomException(e.getMessage());
+			}
+
+			return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
+		}));
+
+
+	}
+
+
 }

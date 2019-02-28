@@ -46,4 +46,6 @@ public interface UserRepository extends CrudRepository<UserData, Integer> {
 
 	@Query(value="select distinct(country) from user_data", nativeQuery = true)
 	Set<String> getCountries(String lang);
+
+
 }

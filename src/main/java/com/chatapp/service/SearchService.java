@@ -8,6 +8,9 @@ import com.chatapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
+import java.util.stream.Collectors;
+
 @Service
 public class SearchService {
 
@@ -33,6 +36,9 @@ public class SearchService {
     }
 
     public CategoryDTOForSearch getAllCategoryNames(String lang) {
-        return new CategoryDTOForSearch(categoryRepository.getCategoryNames(lang));
+        return new CategoryDTOForSearch(categoryRepository.getCategoryNames(lang)
+                .stream()
+                .sorted(Comparator.naturalOrder())
+                .collect(Collectors.toList()));
     }
 }

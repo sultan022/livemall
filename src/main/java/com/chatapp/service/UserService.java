@@ -1,25 +1,20 @@
 package com.chatapp.service;
 
-import java.util.*;
-
-import javax.validation.Valid;
-
 import com.chatapp.domain.*;
 import com.chatapp.dto.*;
 import com.chatapp.repository.*;
 import com.chatapp.response.UserReviewResponse;
 import com.chatapp.response.UserSearchResponse;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.chatapp.util.CustomException;
 import com.chatapp.util.UtilBase64Image;
 import com.chatapp.util.Utilities;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.validation.Valid;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -44,6 +39,10 @@ public class UserService {
 
     @Autowired
     private Utilities utilities;
+
+    @Autowired
+    private FollowerRepository followerRepository;
+
 
     public void signup(@Valid UserData userData) throws CustomException {
 
@@ -126,26 +125,26 @@ public class UserService {
 
     }
 
-    /*
-     *
-     * only for testing purpose
-     * user and products with Pageble pagination
-     *
-     *
-     * */
-    public UserDtoWithProducts getUserAndProductDetilasWithPagination(String userEmail, Integer pageNumber, Integer size) {
-
-        //Page<UserData> userData = userPaginationRepository.findByEmailPagination(new PageRequest(pageNumber, size));
-
-        Pageable pageable = PageRequest.of(pageNumber, size);
-        Page<UserData> page = userPaginationRepository.findAll(pageable);
-        //userPaginationRepository.
-        page.getContent().forEach(page1 -> {
-            System.out.println(page1.toString());
-        });
-
-        return null;
-    }
+//    /*
+//     *
+//     * only for testing purpose
+//     * user and products with Pageble pagination
+//     *
+//     *
+//     * */
+//    public UserDtoWithProducts getUserAndProductDetilasWithPagination(String userEmail, Integer pageNumber, Integer size) {
+//
+//        //Page<UserData> userData = userPaginationRepository.findByEmailPagination(new PageRequest(pageNumber, size));
+//
+//        Pageable pageable = PageRequest.of(pageNumber, size);
+//        Page<UserData> page = userPaginationRepository.findAll(pageable);
+//        //userPaginationRepository.
+//        page.getContent().forEach(page1 -> {
+//            System.out.println(page1.toString());
+//        });
+//
+//        return null;
+//    }
 
 
     private void mapUserEntityToUserDto(UserDtoWithProducts userDtoWithProducts, UserData userData) {
@@ -273,7 +272,7 @@ public class UserService {
 
     public UserSearchResultDTO searchUsers(SearchBy searchBy, String toSearch, Integer page) {
 
-        page = page * 5 - 5;
+        page = page * 7 - 7;
         if (page < 0)
             throw new CustomException("Incorrect Page Number");
 
@@ -301,5 +300,75 @@ public class UserService {
         }));
 
         return new UserSearchResultDTO(userSearchResponses);
+    }
+
+    public UserFollowersDTO getUserFollowers(String userEmail, Integer page) {
+
+
+        page = page * 5 - 5;
+        if (page < 0)
+            throw new CustomException("Incorrect Page Number");
+
+        Integer id = userRepository.findUserIdbyEmail(userEmail);
+        if (id == null)
+            throw new CustomException("User does not exists");
+
+        Set<UserFollowerDTO> userFollowerDTOList = new HashSet<>();
+
+        List<Integer> followerIds = userFollowerRepository.findFollowersByUserId(id, page, 5);
+        followerRepository.findFollowerDetailsByIds(followerIds).forEach(follower -> {
+
+            userFollowerDTOList.add(modelMapper.map(follower, UserFollowerDTO.class));
+        });
+
+
+        if (!userFollowerDTOList.isEmpty()) {
+
+            userFollowerDTOList.forEach(follower -> {
+
+                follower.setProfilePic(UtilBase64Image.getImageFromDirectory(follower.getProfilePic()));
+
+            });
+        }
+
+        return new UserFollowersDTO(userFollowerDTOList);
+
+    }
+
+
+
+    public UserFollowingDTO getUserFollowings(String userEmail, Integer page) {
+        {
+
+
+            page = page * 5 - 5;
+            if (page < 0)
+                throw new CustomException("Incorrect Page Number");
+
+            Integer id = userRepository.findUserIdbyEmail(userEmail);
+            if (id == null)
+                throw new CustomException("User does not exists");
+
+            Set<UserFollowing> followingsList = new HashSet<>();
+
+            List<Integer> followingIds = userFollowerRepository.findFolloweingsByUserId(id, page, 5);
+            followerRepository.findFollowerDetailsByIds(followingIds).forEach(following -> {
+
+                followingsList.add(modelMapper.map(following, UserFollowing.class));
+            });
+
+
+            if (!followingsList.isEmpty()) {
+
+                followingsList.forEach(following -> {
+
+                    following.setProfilePic(UtilBase64Image.getImageFromDirectory(following.getProfilePic()));
+
+                });
+            }
+
+            return new UserFollowingDTO(followingsList);
+
+        }
     }
 }

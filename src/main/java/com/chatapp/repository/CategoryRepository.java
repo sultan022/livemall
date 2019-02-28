@@ -21,6 +21,9 @@ public interface CategoryRepository extends CrudRepository<Category, Integer> {
 	Optional<Category> checkCategoryExistsByDefaultName(@Param("category_default_name") String categoryDefaultName,
 			@Param("lang") String lang);
 
-	@Query(value = "select distinct(category_default_name) from category", nativeQuery = true)
-    Set<String> getCategoryNames(String lang);
+	@Query(value = "select distinct(category_name) from category where lang=:lang", nativeQuery = true)
+    Set<String> getCategoryNames(@Param("lang") String lang);
+
+	@Query(value = "select * from category where category_default_name=:categoryDefaultName", nativeQuery = true)
+    Category findCategoryByDefaultName(@Param("categoryDefaultName") String categoryDefaultName);
 }

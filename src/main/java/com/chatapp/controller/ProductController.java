@@ -1,35 +1,22 @@
 package com.chatapp.controller;
 
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-
-import javax.validation.Valid;
-
-import com.chatapp.dto.UserDtoWithProducts;
-import com.chatapp.dto.UserProductsForMenu;
-import com.chatapp.util.DeferredResults;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.chatapp.domain.Product;
 import com.chatapp.dto.ProductDTO;
+import com.chatapp.dto.UserProductsForMenu;
 import com.chatapp.response.CustomResponse;
 import com.chatapp.service.ProductService;
 import com.chatapp.util.CustomException;
-
+import com.chatapp.util.DeferredResults;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.async.DeferredResult;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/rest/product")

@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 @Data @AllArgsConstructor @NoArgsConstructor
-public class CategoryDTOForSearch {
+public class UserFollowingDTO {
 
-    private List<String> categories;
+    private Set<UserFollowing> userFollowings;
 }

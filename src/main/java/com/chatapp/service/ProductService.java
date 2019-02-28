@@ -23,6 +23,7 @@ import com.chatapp.repository.ProductRepository;
 import com.chatapp.repository.UserRepository;
 import com.chatapp.util.CustomException;
 import com.chatapp.util.UtilBase64Image;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductService {
@@ -39,6 +40,7 @@ public class ProductService {
     @Autowired
     ModelMapper modelMapper;
 
+    @Transactional
     public Product saveProduct(@Valid Product product, String userEmail) throws CustomException {
 
         UserData userData = userRepository.findUserbyEmail(userEmail);
@@ -188,6 +190,7 @@ public class ProductService {
         return product;
     }
 
+    @Transactional
     public void delProduct(String productName, String userEmail) throws CustomException {
 
         Product product = productRepository.findProductByName(productName);
