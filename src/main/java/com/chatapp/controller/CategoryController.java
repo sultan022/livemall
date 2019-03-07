@@ -74,7 +74,7 @@ public class CategoryController {
 
 
 	@ApiOperation(value = "Add a new Category")
-	@DeleteMapping("/{categoryDefaultName}")
+	@DeleteMapping("/")
 	@ResponseStatus(HttpStatus.OK)
 	public <T> DeferredResult<ResponseEntity<?>> deleteCategory(@Valid @RequestParam("lang") String lang,
 															 @Valid @RequestHeader("categoryDefaultName") String categoryDefaultName,

@@ -14,8 +14,8 @@ import java.util.Optional;
 public interface UserFollowerRepository extends CrudRepository<UserFollower, Integer>{
 
     @Query(value = "select follower_id from user_follower where user_id=:id limit :start,:end", nativeQuery = true)
-    List<Integer> findFollowersByUserId(@Param("id") Integer id,@Param("start") Integer start, @Param("end") Integer end);
+    Optional<List<Integer>> findFollowersByUserId(@Param("id") Integer id,@Param("start") Integer start, @Param("end") Integer end);
 
     @Query(value = "select user_id from user_follower where follower_id=:id limit :start,:end", nativeQuery = true)
-    List<Integer> findFolloweingsByUserId(@Param("id") Integer id,@Param("start") Integer start, @Param("end") Integer end);
+    Optional<List<Integer>> findFollowingsByUserId(@Param("id") Integer id,@Param("start") Integer start, @Param("end") Integer end);
 }

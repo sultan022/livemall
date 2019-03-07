@@ -1,0 +1,10 @@
+spring:
+  cache:
+    ehcache:
+      config: classpath:ehcache.xml
+  jpa:
+    properties:
+      hibernate:
+        cache:
+          region.factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
+          use_second_level_cache: true

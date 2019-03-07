@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ehcache>
+<ehcache>
+    <cache name="searchFilterCache"
+           eternal="false"
+           overflowToDisk="false"
+           timeToLiveSeconds="3600"
+           timeToIdleSeconds="3600"
+           memoryStoreEvictionPolicy="LRU">
+    </cache>
+    <defaultCache
+            eternal="false"
+            timeToLiveSeconds="60"
+            timeToIdleSeconds="60"
+            overflowToDisk="false"
+            memoryStoreEvictionPolicy="LRU"/>
+</ehcache>

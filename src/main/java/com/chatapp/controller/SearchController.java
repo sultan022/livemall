@@ -1,11 +1,9 @@
 package com.chatapp.controller;
 
-import com.chatapp.domain.Category;
-import com.chatapp.domain.SearchBy;
 import com.chatapp.dto.CategoryDTOForSearch;
 import com.chatapp.dto.CityDTO;
 import com.chatapp.dto.CountryDTO;
-import com.chatapp.dto.UserSearchResultDTO;
+import com.chatapp.dto.SearchFilerDTO;
 import com.chatapp.response.CustomResponse;
 import com.chatapp.service.SearchService;
 import com.chatapp.util.CustomException;
@@ -113,6 +111,33 @@ public class SearchController {
     }
 
 
+    @ApiOperation(value = "Get Filters to Search users")
+    @GetMapping("/filters")
+    @ResponseStatus(HttpStatus.OK)
+    public <T> DeferredResult<ResponseEntity<?>> getFilters(@Valid @RequestHeader(value = "channel") String channel,
+                                                                  @Valid @RequestParam("lang") String lang) throws CustomException, Exception {
+
+        CustomResponse<SearchFilerDTO> customResponse = new CustomResponse<>();
+
+        return DeferredResults.from(CompletableFuture.supplyAsync(() -> {
+
+            try {
+                customResponse.setData(searchService.getSearchFilters(lang));
+                customResponse.setMessage("");
+                customResponse.setCallStatus("true");
+                customResponse.setResultCode("00");
+            } catch (CustomException e) {
+                e.printStackTrace();
+                throw new CustomException(e.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new CustomException("An error has occurred");
+            }
+
+            return new ResponseEntity<CustomResponse>(customResponse, HttpStatus.OK);
+        }));
+
+    }
 
 
 

@@ -8,6 +8,7 @@ import com.chatapp.response.UserSearchResponse;
 import com.chatapp.util.CustomException;
 import com.chatapp.util.UtilBase64Image;
 import com.chatapp.util.Utilities;
+import org.apache.logging.log4j.util.PropertySource;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -313,28 +315,24 @@ public class UserService {
         if (id == null)
             throw new CustomException("User does not exists");
 
-        Set<UserFollowerDTO> userFollowerDTOList = new HashSet<>();
+        List<UserFollowerDTO> userFollowerDTOList = new ArrayList<>();
 
-        List<Integer> followerIds = userFollowerRepository.findFollowersByUserId(id, page, 5);
-        followerRepository.findFollowerDetailsByIds(followerIds).forEach(follower -> {
+        Optional<List<Integer>> followerIds = userFollowerRepository.findFollowersByUserId(id, page, 5);
 
+
+        if (!followerIds.isPresent())
+            throw new CustomException("no Followers available");
+        followerRepository.findFollowerDetailsByIds(followerIds.get()).forEach(follower -> {
+
+            follower.setProfilePic(UtilBase64Image.getImageFromDirectory(follower.getProfilePic()));
             userFollowerDTOList.add(modelMapper.map(follower, UserFollowerDTO.class));
         });
 
-
-        if (!userFollowerDTOList.isEmpty()) {
-
-            userFollowerDTOList.forEach(follower -> {
-
-                follower.setProfilePic(UtilBase64Image.getImageFromDirectory(follower.getProfilePic()));
-
-            });
-        }
-
-        return new UserFollowersDTO(userFollowerDTOList);
+        return new UserFollowersDTO(userFollowerDTOList.stream()
+                .sorted((e1, e2) -> e1.getName().compareTo(e2.getName()))
+                .collect(Collectors.toList()));
 
     }
-
 
 
     public UserFollowingDTO getUserFollowings(String userEmail, Integer page) {
@@ -349,25 +347,21 @@ public class UserService {
             if (id == null)
                 throw new CustomException("User does not exists");
 
-            Set<UserFollowing> followingsList = new HashSet<>();
+            List<UserFollowing> followingsSet = new ArrayList<>();
 
-            List<Integer> followingIds = userFollowerRepository.findFolloweingsByUserId(id, page, 5);
-            followerRepository.findFollowerDetailsByIds(followingIds).forEach(following -> {
+            Optional<List<Integer>> followingIds = userFollowerRepository.findFollowingsByUserId(id, page, 5);
+            if (!followingIds.isPresent())
+                throw new CustomException("no followings available");
+            followerRepository.findFollowerDetailsByIds(followingIds.get()).forEach(following -> {
 
-                followingsList.add(modelMapper.map(following, UserFollowing.class));
+                following.setProfilePic(UtilBase64Image.getImageFromDirectory(following.getProfilePic()));
+                followingsSet.add(modelMapper.map(following, UserFollowing.class));
             });
 
 
-            if (!followingsList.isEmpty()) {
-
-                followingsList.forEach(following -> {
-
-                    following.setProfilePic(UtilBase64Image.getImageFromDirectory(following.getProfilePic()));
-
-                });
-            }
-
-            return new UserFollowingDTO(followingsList);
+            return new UserFollowingDTO(followingsSet.stream()
+                    .sorted((e1, e2) -> e1.getName().compareTo(e2.getName()))
+                    .collect(Collectors.toList()));
 
         }
     }

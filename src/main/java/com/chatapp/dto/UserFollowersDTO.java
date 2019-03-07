@@ -4,9 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
+
 @Data @AllArgsConstructor @NoArgsConstructor
 public class UserFollowersDTO {
 
-    private Set<UserFollowerDTO> followers;
+    private List<UserFollowerDTO> followers;
 }
